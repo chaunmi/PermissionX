@@ -190,32 +190,32 @@ internal object PermissionChecker {
         ) {
             return
         }
-        for (permission: String? in requestPermissions) {
-            if ((PermissionUtils.equalsPermission(permission, Permission.ACCESS_MEDIA_LOCATION)
-                        || PermissionUtils.equalsPermission(
-                    permission,
-                    Permission.READ_MEDIA_IMAGES
-                )
-                        || PermissionUtils.equalsPermission(
-                    permission,
-                    Permission.READ_EXTERNAL_STORAGE
-                )
-                        || PermissionUtils.equalsPermission(
-                    permission,
-                    Permission.WRITE_EXTERNAL_STORAGE
-                )
-                        || PermissionUtils.equalsPermission(
-                    permission,
-                    Permission.MANAGE_EXTERNAL_STORAGE
-                ))
-            ) {
-                continue
-            }
-            throw IllegalArgumentException(
-                "Because it includes access media location permissions, " +
-                        "do not apply for permissions unrelated to access media location"
-            )
-        }
+//        for (permission: String? in requestPermissions) {
+//            if ((PermissionUtils.equalsPermission(permission, Permission.ACCESS_MEDIA_LOCATION)
+//                        || PermissionUtils.equalsPermission(
+//                    permission,
+//                    Permission.READ_MEDIA_IMAGES
+//                )
+//                        || PermissionUtils.equalsPermission(
+//                    permission,
+//                    Permission.READ_EXTERNAL_STORAGE
+//                )
+//                        || PermissionUtils.equalsPermission(
+//                    permission,
+//                    Permission.WRITE_EXTERNAL_STORAGE
+//                )
+//                        || PermissionUtils.equalsPermission(
+//                    permission,
+//                    Permission.MANAGE_EXTERNAL_STORAGE
+//                ))
+//            ) {
+//                continue
+//            }
+//            throw IllegalArgumentException(
+//                "Because it includes access media location permissions, " +
+//                        "do not apply for permissions unrelated to access media location"
+//            )
+//        }
         if (AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_13) {
             if (!PermissionUtils.containsPermission(
                     requestPermissions,
@@ -477,24 +477,24 @@ internal object PermissionChecker {
                         Permission.ACCESS_FINE_LOCATION
             )
         }
-        for (permission: String? in requestPermissions) {
-            if ((PermissionUtils.equalsPermission(permission, Permission.ACCESS_FINE_LOCATION)
-                        || PermissionUtils.equalsPermission(
-                    permission,
-                    Permission.ACCESS_COARSE_LOCATION
-                )
-                        || PermissionUtils.equalsPermission(
-                    permission,
-                    Permission.ACCESS_BACKGROUND_LOCATION
-                ))
-            ) {
-                continue
-            }
-            throw IllegalArgumentException(
-                "Because it includes background location permissions, " +
-                        "do not apply for permissions unrelated to location"
-            )
-        }
+//        for (permission: String? in requestPermissions) {
+//            if ((PermissionUtils.equalsPermission(permission, Permission.ACCESS_FINE_LOCATION)
+//                        || PermissionUtils.equalsPermission(
+//                    permission,
+//                    Permission.ACCESS_COARSE_LOCATION
+//                )
+//                        || PermissionUtils.equalsPermission(
+//                    permission,
+//                    Permission.ACCESS_BACKGROUND_LOCATION
+//                ))
+//            ) {
+//                continue
+//            }
+//            throw IllegalArgumentException(
+//                "Because it includes background location permissions, " +
+//                        "do not apply for permissions unrelated to location"
+//            )
+//        }
     }
 
     /**
