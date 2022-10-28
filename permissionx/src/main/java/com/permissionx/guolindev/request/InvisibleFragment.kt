@@ -17,9 +17,9 @@ package com.permissionx.guolindev.request
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.os.Build
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
@@ -28,7 +28,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.permissionx.guolindev.PermissionX
-import java.util.ArrayList
+import com.permissionx.guolindev.utils.PermissionUtils
 
 /**
  * An invisible fragment to embedded into activity for handling permission requests.
@@ -186,8 +186,11 @@ class InvisibleFragment : Fragment() {
         pb = permissionBuilder
         task = chainTask
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(requireContext())) {
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+            var intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
             intent.data = Uri.parse("package:${requireActivity().packageName}")
+            if (!PermissionUtils.areActivityIntent(requireActivity(), intent)) {
+                intent = PermissionUtils.getApplicationDetailsIntent(requireActivity())
+            }
             requestSystemAlertWindowLauncher.launch(intent)
         } else {
             onRequestSystemAlertWindowPermissionResult()

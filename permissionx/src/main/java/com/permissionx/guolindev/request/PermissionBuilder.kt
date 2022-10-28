@@ -33,6 +33,9 @@ import com.permissionx.guolindev.callback.RequestCallback
 import com.permissionx.guolindev.dialog.DefaultDialog
 import com.permissionx.guolindev.dialog.RationaleDialog
 import com.permissionx.guolindev.dialog.RationaleDialogFragment
+import com.permissionx.guolindev.dialog.allSpecialPermissions
+import com.permissionx.guolindev.utils.AndroidVersion
+import com.permissionx.guolindev.utils.PermissionChecker
 import java.util.*
 
 /**
@@ -44,8 +47,7 @@ import java.util.*
 class PermissionBuilder(
     fragmentActivity: FragmentActivity?,
     fragment: Fragment?,
-    normalPermissions: MutableSet<String>,
-    specialPermissions: MutableSet<String>
+    permissions: List<String>
 ) {
 
     /**
@@ -109,18 +111,29 @@ class PermissionBuilder(
     @JvmField
     var currentDialog: Dialog? = null
 
+
+
+
+    @JvmField
+    var permissions: List<String>
+
     /**
      * Normal runtime permissions that app want to request.
+     * 运行时权限，Android 6.0 (M) 的新特性，又称危险权限，指的是可能会触及用户隐私或对设备安全性造成影响的权限，
+     * 如获得联系人信息、访问位置等。此类权限需要在代码进行申请，系统弹出许可对话框，当用户手动同意后才会获得授权。
      */
     @JvmField
-    var normalPermissions: MutableSet<String>
+    var normalPermissions: MutableSet<String> = LinkedHashSet<String>()
 
     /**
      * Special permissions that we need to handle by special case.
      * Such as SYSTEM_ALERT_WINDOW, WRITE_SETTINGS and MANAGE_EXTERNAL_STORAGE.
+     *
+     * Google认为此类权限比危险权限更敏感，因此需要让用户到专门的设置页面手动对某个应用程序授权。
+     * 如：悬浮框权限、修改设置权限、管理外部存储等。特殊权限需要特殊处理！！！
      */
     @JvmField
-    var specialPermissions: MutableSet<String>
+    var specialPermissions: MutableSet<String> = LinkedHashSet<String>()
 
     /**
      * Indicates should PermissionX explain request reason before request.
@@ -285,7 +298,45 @@ class PermissionBuilder(
      */
     fun request(callback: RequestCallback?) {
         requestCallback = callback
+        if (!PermissionChecker.checkPermissions(activity, this.permissions)) {
+            callback?.onError("check permissions error!!")
+            return
+        }
+        this.permissions = PermissionChecker.optimizeDeprecatedPermission(this.permissions)
+        initPermissions().apply {
+            normalPermissions = first
+            specialPermissions = second
+        }
         startRequest()
+    }
+
+    /**
+     * 撤销权限并杀死当前进程
+     *
+     * @return          返回 true 代表成功，返回 false 代表失败
+     */
+    fun revokeOnKill(): Boolean {
+        if (activity == null) {
+            return false
+        }
+        return if (!AndroidVersion.isAndroid13) {
+            false
+        } else try {
+            if (permissions.size == 1) {
+                // API 文档：https://developer.android.google.cn/reference/android/content/Context#revokeSelfPermissionOnKill(java.lang.String)
+                activity.revokeSelfPermissionOnKill(permissions[0])
+            } else {
+                // API 文档：https://developer.android.google.cn/reference/android/content/Context#revokeSelfPermissionsOnKill(java.util.Collection%3Cjava.lang.String%3E)
+                activity.revokeSelfPermissionsOnKill(permissions)
+            }
+            true
+        } catch (e: IllegalArgumentException) {
+            if (PermissionChecker.isCheckMode()) {
+                throw e
+            }
+            e.printStackTrace()
+            false
+        }
     }
 
     /**
@@ -433,7 +484,7 @@ class PermissionBuilder(
      *
      * @param chainTask Instance of current task.
      */
-    fun requestAccessBackgroundLocationPermissionNow(chainTask: ChainTask) {
+    internal fun requestAccessBackgroundLocationPermissionNow(chainTask: ChainTask) {
         invisibleFragment.requestAccessBackgroundLocationPermissionNow(this, chainTask)
     }
 
@@ -442,7 +493,7 @@ class PermissionBuilder(
      *
      * @param chainTask Instance of current task.
      */
-    fun requestSystemAlertWindowPermissionNow(chainTask: ChainTask) {
+    internal fun requestSystemAlertWindowPermissionNow(chainTask: ChainTask) {
         invisibleFragment.requestSystemAlertWindowPermissionNow(this, chainTask)
     }
 
@@ -451,7 +502,7 @@ class PermissionBuilder(
      *
      * @param chainTask Instance of current task.
      */
-    fun requestWriteSettingsPermissionNow(chainTask: ChainTask) {
+    internal fun requestWriteSettingsPermissionNow(chainTask: ChainTask) {
         invisibleFragment.requestWriteSettingsPermissionNow(this, chainTask)
     }
 
@@ -460,7 +511,7 @@ class PermissionBuilder(
      *
      * @param chainTask Instance of current task.
      */
-    fun requestManageExternalStoragePermissionNow(chainTask: ChainTask) {
+    internal fun requestManageExternalStoragePermissionNow(chainTask: ChainTask) {
         invisibleFragment.requestManageExternalStoragePermissionNow(this, chainTask)
     }
 
@@ -469,7 +520,7 @@ class PermissionBuilder(
      *
      * @param chainTask Instance of current task.
      */
-    fun requestInstallPackagePermissionNow(chainTask: ChainTask) {
+    internal fun requestInstallPackagePermissionNow(chainTask: ChainTask) {
         invisibleFragment.requestInstallPackagesPermissionNow(this, chainTask)
     }
 
@@ -478,7 +529,7 @@ class PermissionBuilder(
      *
      * @param chainTask Instance of current task.
      */
-    fun requestNotificationPermissionNow(chainTask: ChainTask) {
+    internal fun requestNotificationPermissionNow(chainTask: ChainTask) {
         invisibleFragment.requestNotificationPermissionNow(this, chainTask)
     }
 
@@ -487,7 +538,7 @@ class PermissionBuilder(
      *
      * @param chainTask Instance of current task.
      */
-    fun requestBodySensorsBackgroundPermissionNow(chainTask: ChainTask) {
+    internal fun requestBodySensorsBackgroundPermissionNow(chainTask: ChainTask) {
         invisibleFragment.requestBodySensorsBackgroundPermissionNow(this, chainTask)
     }
 
@@ -645,7 +696,38 @@ class PermissionBuilder(
             activity = fragment.requireActivity()
         }
         this.fragment = fragment
-        this.normalPermissions = normalPermissions
-        this.specialPermissions = specialPermissions
+        this.permissions = permissions
+        PermissionChecker.updateDefaultCheckModel(activity)
+    }
+
+    private  fun initPermissions(): Pair<LinkedHashSet<String>, LinkedHashSet<String>> {
+        val normalPermissionSet = LinkedHashSet<String>()
+        val specialPermissionSet = LinkedHashSet<String>()
+        for (permission in permissions) {
+            if (permission in allSpecialPermissions) {
+                specialPermissionSet.add(permission)
+            } else {
+                normalPermissionSet.add(permission)
+            }
+        }
+        val osVersion = Build.VERSION.SDK_INT
+        if (RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION in specialPermissionSet) {
+            if (osVersion == Build.VERSION_CODES.Q ||
+                (osVersion == Build.VERSION_CODES.R && targetSdkVersion < Build.VERSION_CODES.R)) {
+                // If we request ACCESS_BACKGROUND_LOCATION on Q or on R but targetSdkVersion below R,
+                // We don't need to request specially, just request as normal permission.
+                specialPermissionSet.remove(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
+                normalPermissionSet.add(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
+            }
+        }
+        if (PermissionX.permission.POST_NOTIFICATIONS in specialPermissionSet) {
+            if (osVersion >= Build.VERSION_CODES.TIRAMISU && targetSdkVersion >= Build.VERSION_CODES.TIRAMISU) {
+                // If we request POST_NOTIFICATIONS on TIRAMISU or above and targetSdkVersion >= TIRAMISU,
+                // We don't need to request specially, just request as normal permission.
+                specialPermissionSet.remove(PermissionX.permission.POST_NOTIFICATIONS)
+                normalPermissionSet.add(PermissionX.permission.POST_NOTIFICATIONS)
+            }
+        }
+        return Pair(normalPermissionSet, specialPermissionSet)
     }
 }

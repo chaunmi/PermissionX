@@ -30,6 +30,8 @@ class MainFragment : Fragment() {
                 .permissions(
                 Manifest.permission.CAMERA,
                     Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                     Manifest.permission.RECORD_AUDIO,
 //                    Manifest.permission.READ_CALENDAR,
 //                    Manifest.permission.READ_CALL_LOG,
@@ -42,6 +44,7 @@ class MainFragment : Fragment() {
                 )
                 .setDialogTintColor(Color.parseColor("#1972e8"), Color.parseColor("#8ab6f5"))
                 .onExplainRequestReason { scope, deniedList, beforeRequest ->
+                    //用户选择拒绝后弹窗提示一下用户开启权限的原因，如果同意则再次请求开启权限
                     val message = "PermissionX needs following permissions to continue"
                     scope.showRequestReasonDialog(deniedList, message, "Allow", "Deny")
 //                    val message = "Please allow the following permissions in settings"
@@ -49,6 +52,8 @@ class MainFragment : Fragment() {
 //                    scope.showRequestReasonDialog(dialog)
                 }
                 .onForwardToSettings { scope, deniedList ->
+                    //所有被用户选择了”拒绝且不再询问“的权限都会进行到这个方法中处理，拒绝的权限都记录在deniedList参数当中
+                    // 被用户永久拒绝了，需要跳转到权限设置页面中打开
                     val message = "Please allow following permissions in settings"
                     scope.showForwardToSettingsDialog(deniedList, message, "Allow", "Deny")
                 }

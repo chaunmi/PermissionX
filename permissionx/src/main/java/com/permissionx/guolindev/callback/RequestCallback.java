@@ -41,4 +41,6 @@ public interface RequestCallback {
      */
     void onResult(boolean allGranted, @NonNull List<String> grantedList, @NonNull List<String> deniedList);
 
+    default void onError(String msg) {}
+
 }

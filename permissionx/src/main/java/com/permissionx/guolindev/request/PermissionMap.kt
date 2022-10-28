@@ -27,6 +27,10 @@ import com.permissionx.guolindev.request.RequestManageExternalStoragePermission
 
 /**
  * Maintains all the special permissions that we need to handle by special case.
+ *  https://developer.android.com/guide/topics/permissions/overview?hl=zh-cn
+ *  Google认为此类权限比危险权限更敏感，因此需要让用户到专门的设置页面手动对某个应用程序授权。
+ *  如：悬浮框权限、修改设置权限、管理外部存储等。特殊权限需要特殊处理！！！
+ *
  */
 val allSpecialPermissions = setOf(
     RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION,
