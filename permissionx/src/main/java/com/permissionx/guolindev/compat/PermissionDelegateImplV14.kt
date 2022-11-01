@@ -19,7 +19,7 @@ internal open class PermissionDelegateImplV14 : PermissionDelegate {
     override
     fun isGrantedPermission(context: Context, permission: String?): Boolean {
         // 检测通知栏权限
-        if (PermissionUtils.equalsPermission(permission, Permission.NOTIFICATION_SERVICE)) {
+        if (PermissionUtils.equalsPermission(permission, Permission.POST_NOTIFICATIONS)) {
             return isGrantedNotifyPermission(context)
         }
 
@@ -41,17 +41,6 @@ internal open class PermissionDelegateImplV14 : PermissionDelegate {
         if (PermissionUtils.equalsPermission(permission, Permission.BIND_VPN_SERVICE)) {
             return isGrantedVpnPermission(context)
         }
-
-        /* ---------------------------------------------------------------------------------------- */
-
-        // 向下兼容 Android 13 新权限
-        if (!AndroidVersion.isAndroid13) {
-            if (PermissionUtils.equalsPermission(permission, Permission.POST_NOTIFICATIONS)) {
-                return isGrantedNotifyPermission(context)
-            }
-        }
-
-        /* ---------------------------------------------------------------------------------------- */
         return true
     }
 
@@ -62,7 +51,7 @@ internal open class PermissionDelegateImplV14 : PermissionDelegate {
 
     override
     fun getPermissionIntent(context: Context, permission: String?): Intent {
-        if (PermissionUtils.equalsPermission(permission, Permission.NOTIFICATION_SERVICE)) {
+        if (PermissionUtils.equalsPermission(permission, Permission.POST_NOTIFICATIONS)) {
             return getNotifyPermissionIntent(context)
         }
         if (PermissionUtils.equalsPermission(permission, Permission.PACKAGE_USAGE_STATS)) {
@@ -79,16 +68,7 @@ internal open class PermissionDelegateImplV14 : PermissionDelegate {
             return getVpnPermissionIntent(context)
         }
 
-        /* ---------------------------------------------------------------------------------------- */
-
-        // 向下兼容 Android 13 新权限
-        if (!AndroidVersion.isAndroid13) {
-            if (PermissionUtils.equalsPermission(permission, Permission.POST_NOTIFICATIONS)) {
-                return getNotifyPermissionIntent(context)
-            }
-        }
-
-        /* ---------------------------------------------------------------------------------------- */return PermissionUtils.getApplicationDetailsIntent(
+        return PermissionUtils.getApplicationDetailsIntent(
             context
         )
     }

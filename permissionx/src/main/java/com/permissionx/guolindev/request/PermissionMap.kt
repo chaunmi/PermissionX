@@ -38,6 +38,7 @@ val allSpecialPermissions = setOf(
     Manifest.permission.WRITE_SETTINGS,
     RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE,
     RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES,
+    //https://developer.android.google.cn/about/versions/13/changes/notification-permission
     PermissionX.permission.POST_NOTIFICATIONS,
     RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND,
 )

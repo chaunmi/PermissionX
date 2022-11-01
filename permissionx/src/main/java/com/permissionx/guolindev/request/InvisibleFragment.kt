@@ -188,9 +188,6 @@ class InvisibleFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(requireContext())) {
             var intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
             intent.data = Uri.parse("package:${requireActivity().packageName}")
-            if (!PermissionUtils.areActivityIntent(requireActivity(), intent)) {
-                intent = PermissionUtils.getApplicationDetailsIntent(requireActivity())
-            }
             requestSystemAlertWindowLauncher.launch(intent)
         } else {
             onRequestSystemAlertWindowPermissionResult()
@@ -208,8 +205,11 @@ class InvisibleFragment : Fragment() {
         pb = permissionBuilder
         task = chainTask
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(requireContext())) {
-            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+            var intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
             intent.data = Uri.parse("package:${requireActivity().packageName}")
+            if (!PermissionUtils.areActivityIntent(requireActivity(), intent)) {
+                intent = PermissionUtils.getApplicationDetailsIntent(requireActivity())
+            }
             requestWriteSettingsLauncher.launch(intent)
         } else {
             onRequestWriteSettingsPermissionResult()
@@ -233,6 +233,9 @@ class InvisibleFragment : Fragment() {
             if (intent.resolveActivity(requireActivity().packageManager) == null) {
                 intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
             }
+            if (!PermissionUtils.areActivityIntent(requireActivity(), intent)) {
+                intent = PermissionUtils.getApplicationDetailsIntent(requireActivity())
+            }
             requestManageExternalStorageLauncher.launch(intent)
         } else {
             onRequestManageExternalStoragePermissionResult()
@@ -242,6 +245,8 @@ class InvisibleFragment : Fragment() {
     /**
      * Request REQUEST_INSTALL_PACKAGES permission. On Android O and above, it's request by
      * Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES with Intent.
+     * TODO 需要适配一下，12还是13可以向运行时权限一样直接申请安装权限，不用再跳转
+     *
      */
     fun requestInstallPackagesPermissionNow(
         permissionBuilder: PermissionBuilder,
@@ -250,7 +255,7 @@ class InvisibleFragment : Fragment() {
         pb = permissionBuilder
         task = chainTask
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+            var intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
             intent.data = Uri.parse("package:${requireActivity().packageName}")
             requestInstallPackagesLauncher.launch(intent)
         } else {
@@ -261,6 +266,8 @@ class InvisibleFragment : Fragment() {
     /**
      * Request notification permission. On Android O and above, it's request by
      * Settings.ACTION_APP_NOTIFICATION_SETTINGS with Intent.
+     *
+     * https://developer.android.google.cn/about/versions/13/changes/notification-permission
      */
     fun requestNotificationPermissionNow(
         permissionBuilder: PermissionBuilder,
@@ -269,8 +276,11 @@ class InvisibleFragment : Fragment() {
         pb = permissionBuilder
         task = chainTask
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            var intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
             intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireActivity().packageName)
+            if (!PermissionUtils.areActivityIntent(requireActivity(), intent)) {
+                intent = PermissionUtils.getApplicationDetailsIntent(requireActivity())
+            }
             requestNotificationLauncher.launch(intent)
         } else {
             onRequestInstallPackagesPermissionResult()
@@ -337,10 +347,12 @@ class InvisibleFragment : Fragment() {
                     // Denied permission can turn into permanent denied permissions, but permanent denied permission can not turn into denied permissions.
                     val shouldShowRationale = shouldShowRequestPermissionRationale(permission)
                     if (shouldShowRationale) {
+                        //拒绝，还可以弹窗解释一下，然后再申请权限
                         showReasonList.add(permission)
                         pb.deniedPermissions.add(permission)
                         // So there's no need to remove the current permission from permanentDeniedPermissions because it won't be there.
                     } else {
+                        // 永久拒绝，只能去权限设置页面开启了
                         forwardList.add(permission)
                         pb.permanentDeniedPermissions.add(permission)
                         // We must remove the current permission from deniedPermissions because it is permanent denied permission now.

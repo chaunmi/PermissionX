@@ -45,6 +45,6 @@ internal class PermissionDelegateImplV33 : PermissionDelegateImplV31() {
         ) {
             !PermissionUtils.checkSelfPermission(activity, permission) &&
                     !PermissionUtils.shouldShowRequestPermissionRationale(activity, permission)
-        } else super.isPermissionPermanentDenied(activity!!, permission)
+        } else super.isPermissionPermanentDenied(activity, permission)
     }
 }

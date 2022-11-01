@@ -3,15 +3,23 @@ package com.permissionx.app
 import android.Manifest
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.permissionx.app.databinding.FragmentMainBinding
+import com.permissionx.guolindev.Permission
 import com.permissionx.guolindev.PermissionX
+import com.permissionx.guolindev.request.PermissionApi
+import com.permissionx.guolindev.utils.PermissionUtils
 
 class MainFragment : Fragment() {
+
+    companion object {
+        const val TAG = "myTest"
+    }
 
     private var _binding: FragmentMainBinding? = null
 
@@ -25,7 +33,10 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        val context = context!!
+
         binding.makeRequestBtn.setOnClickListener {
+
+            PermissionX.setCheckMode(false)
             PermissionX.init(this)
                 .permissions(
                 Manifest.permission.CAMERA,
@@ -33,6 +44,9 @@ class MainFragment : Fragment() {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                     Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
 //                    Manifest.permission.READ_CALENDAR,
 //                    Manifest.permission.READ_CALL_LOG,
 //                    Manifest.permission.READ_CONTACTS,

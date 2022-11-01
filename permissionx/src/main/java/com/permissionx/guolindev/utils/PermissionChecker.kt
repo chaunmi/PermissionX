@@ -21,11 +21,6 @@ internal object PermissionChecker {
 
     fun checkPermissions(context: Context?, permissions: List<String>): Boolean{
 
-        if(context == null) {
-            LogUtils.e("context is null !!")
-            return false
-        }
-
         val checkMode: Boolean = isCheckMode()
 
         // 检查当前 Activity 状态是否是正常的，如果不是则不请求权限
@@ -39,7 +34,7 @@ internal object PermissionChecker {
             return false
         }
 
-        if (checkMode) {
+        if (checkMode && context != null) {
             // 检查申请的读取媒体位置权限是否符合规范
             checkMediaLocationPermission(context, permissions)
             // 检查申请的存储权限是否符合规范
@@ -668,8 +663,7 @@ internal object PermissionChecker {
         val minSdkVersion =
             if (Build.VERSION.SDK_INT >= AndroidVersion.ANDROID_7) context.applicationInfo.minSdkVersion else AndroidVersion.ANDROID_6
         for (permission: String in requestPermissions) {
-            if ((PermissionUtils.equalsPermission(permission, Permission.NOTIFICATION_SERVICE) ||
-                        PermissionUtils.equalsPermission(
+            if ((PermissionUtils.equalsPermission(
                             permission,
                             Permission.BIND_NOTIFICATION_LISTENER_SERVICE
                         ) ||
@@ -871,18 +865,6 @@ internal object PermissionChecker {
         if (!AndroidVersion.isAndroid13) {
             if (PermissionUtils.containsPermission(
                     requestPermissions,
-                    Permission.POST_NOTIFICATIONS
-                ) &&
-                !PermissionUtils.containsPermission(
-                    requestPermissions,
-                    Permission.NOTIFICATION_SERVICE
-                )
-            ) {
-                // 添加旧版的通知权限
-                requestPermissions.add(Permission.NOTIFICATION_SERVICE)
-            }
-            if (PermissionUtils.containsPermission(
-                    requestPermissions,
                     Permission.NEARBY_WIFI_DEVICES
                 ) &&
                 !PermissionUtils.containsPermission(
@@ -949,7 +931,8 @@ internal object PermissionChecker {
                 // 框架会在 Android 10 以下的版本上自动添加并申请这两个权限
                 throw IllegalArgumentException(
                     "If you have applied for MANAGE_EXTERNAL_STORAGE permissions, " +
-                            "do not apply for the READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permissions"
+                            "do not apply for the READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permissions，" +
+                            "for below Android 11, the permissionX will add READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE auto。"
                 )
             }
             if (!AndroidVersion.isAndroid11) {

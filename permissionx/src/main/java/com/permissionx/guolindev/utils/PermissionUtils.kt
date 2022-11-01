@@ -22,7 +22,6 @@ import com.permissionx.guolindev.Permission
 import com.permissionx.guolindev.request.PermissionApi
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
-import java.lang.NullPointerException
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 
@@ -38,7 +37,7 @@ object PermissionUtils {
                 equalsPermission(permission, Permission.REQUEST_INSTALL_PACKAGES) ||
                 equalsPermission(permission, Permission.SYSTEM_ALERT_WINDOW) ||
                 equalsPermission(permission, Permission.WRITE_SETTINGS) ||
-                equalsPermission(permission, Permission.NOTIFICATION_SERVICE) ||
+                equalsPermission(permission, Permission.POST_NOTIFICATIONS) ||
                 equalsPermission(permission, Permission.PACKAGE_USAGE_STATS) ||
                 equalsPermission(permission, Permission.SCHEDULE_EXACT_ALARM) ||
                 equalsPermission(permission, Permission.BIND_NOTIFICATION_LISTENER_SERVICE) ||
@@ -460,10 +459,19 @@ object PermissionUtils {
      * 判断这个意图的 Activity 是否存在
      */
     fun areActivityIntent(context: Context, intent: Intent?): Boolean {
-        return !context.packageManager.queryIntentActivities(
-            intent!!,
-            PackageManager.MATCH_DEFAULT_ONLY
-        ).isEmpty()
+        if(intent == null) {
+            return false
+        }
+        return if(AndroidVersion.isAndroid13) {
+            context.packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(
+                PackageManager.MATCH_DEFAULT_ONLY.toLong()
+            )).isNotEmpty()
+        }else {
+            context.packageManager.queryIntentActivities(
+                intent,
+                PackageManager.MATCH_DEFAULT_ONLY
+            ).isNotEmpty()
+        }
     }
 
     /**
@@ -490,7 +498,8 @@ object PermissionUtils {
 
     /**
      * 根据传入的权限自动选择最合适的权限设置页
-     *
+     * 主要是在特殊权限的时候用，一般只有特殊权限需要跳转具体权限页面
+     * 另一种情况是拒绝不再询问后需要跳转到app权限页面
      * @param permissions                 请求失败的权限
      */
     fun getSmartPermissionIntent(context: Context, permissions: List<String?>?): Intent {
@@ -503,12 +512,6 @@ object PermissionUtils {
         when (permissions.size) {
             1 ->                 // 如果当前只有一个权限被拒绝了
                 return PermissionApi.getPermissionIntent(context, permissions[0])
-            2 -> if (!AndroidVersion.isAndroid13 &&
-                containsPermission(permissions, Permission.NOTIFICATION_SERVICE) &&
-                containsPermission(permissions, Permission.POST_NOTIFICATIONS)
-            ) {
-                return PermissionApi.getPermissionIntent(context, Permission.NOTIFICATION_SERVICE)
-            }
             3 -> if (AndroidVersion.isAndroid11 &&
                 containsPermission(permissions, Permission.MANAGE_EXTERNAL_STORAGE) &&
                 containsPermission(permissions, Permission.READ_EXTERNAL_STORAGE) &&

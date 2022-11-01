@@ -21,7 +21,7 @@ internal open class PermissionDelegateImplV30 : PermissionDelegateImplV29() {
             )
         ) {
             isGrantedManageStoragePermission
-        } else super.isGrantedPermission(context!!, permission)
+        } else super.isGrantedPermission(context, permission)
     }
 
     override
@@ -32,7 +32,7 @@ internal open class PermissionDelegateImplV30 : PermissionDelegateImplV29() {
             )
         ) {
             false
-        } else super.isPermissionPermanentDenied(activity!!, permission)
+        } else super.isPermissionPermanentDenied(activity, permission)
     }
 
     override fun getPermissionIntent(context: Context, permission: String?): Intent {
