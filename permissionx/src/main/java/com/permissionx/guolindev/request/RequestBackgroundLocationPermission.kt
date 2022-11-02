@@ -41,11 +41,19 @@ internal class RequestBackgroundLocationPermission internal constructor(permissi
 
     override fun request() {
         if (pb.shouldRequestBackgroundLocationPermission()) {
+            val accessFindLocationGranted = PermissionX.isGranted(pb.activity, Manifest.permission.ACCESS_FINE_LOCATION)
+            val accessCoarseLocationGranted = PermissionX.isGranted(pb.activity, Manifest.permission.ACCESS_COARSE_LOCATION)
+
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 // If app runs under Android Q, there's no ACCESS_BACKGROUND_LOCATION permissions.
                 // We remove it from request list, but will append it to the request callback as denied permission.
                 pb.specialPermissions.remove(ACCESS_BACKGROUND_LOCATION)
-                pb.permissionsWontRequest.add(ACCESS_BACKGROUND_LOCATION)
+                //对于Q以下的系统，如果申请了位置权限，则默认授予后台定位权限
+                if(accessCoarseLocationGranted || accessFindLocationGranted) {
+                    pb.grantedPermissions.add(ACCESS_BACKGROUND_LOCATION)
+                }else {
+                    pb.permissionsWontRequest.add(ACCESS_BACKGROUND_LOCATION)
+                }
                 finish()
                 return
             }
@@ -54,8 +62,8 @@ internal class RequestBackgroundLocationPermission internal constructor(permissi
                 finish()
                 return
             }
-            val accessFindLocationGranted = PermissionX.isGranted(pb.activity, Manifest.permission.ACCESS_FINE_LOCATION)
-            val accessCoarseLocationGranted = PermissionX.isGranted(pb.activity, Manifest.permission.ACCESS_COARSE_LOCATION)
+
+            //仅当有访问位置权限时才需要去申请后台访问权限，不然此权限申请无意义
             if (accessFindLocationGranted || accessCoarseLocationGranted) {
                 if (pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) {
                     val requestList = mutableListOf(ACCESS_BACKGROUND_LOCATION)

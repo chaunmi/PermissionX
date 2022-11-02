@@ -37,8 +37,7 @@ val allSpecialPermissions = setOf(
     Manifest.permission.WRITE_SETTINGS,
     RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE,
     /**
-     * 系统中也不是特殊权限，但是需要单独跳转，具体可参见
-     * @see RequestInstallPackagesPermission
+     * 系统中也不是特殊权限，但是需要单独跳转，具体可参见[RequestInstallPackagesPermission]
      */
     RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES,
 

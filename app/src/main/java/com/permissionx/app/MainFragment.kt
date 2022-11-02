@@ -41,6 +41,7 @@ class MainFragment : Fragment() {
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                     Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                    Manifest.permission.REQUEST_INSTALL_PACKAGES
 //                    Manifest.permission.READ_EXTERNAL_STORAGE,
 //                    Manifest.permission.WRITE_EXTERNAL_STORAGE
 //                    Manifest.permission.READ_CALENDAR,

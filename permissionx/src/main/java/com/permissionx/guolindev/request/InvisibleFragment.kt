@@ -257,6 +257,9 @@ class InvisibleFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
             intent.data = Uri.parse("package:${requireActivity().packageName}")
+            if (!PermissionUtils.areActivityIntent(requireActivity(), intent)) {
+                intent = PermissionUtils.getApplicationDetailsIntent(requireActivity())
+            }
             requestInstallPackagesLauncher.launch(intent)
         } else {
             onRequestInstallPackagesPermissionResult()

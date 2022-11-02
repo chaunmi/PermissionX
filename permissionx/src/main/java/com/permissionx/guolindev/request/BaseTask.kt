@@ -65,6 +65,10 @@ internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTas
              * TODO 这里逻辑可以优化以下，针对低版本的情况，比如MANAGE_EXTERNAL_STORAGE和REQUEST_INSTALL_PACKAGES的处理
              */
 
+            /**
+             * 对于Q以下版本无后台定位权限，在[RequestBackgroundLocationPermission]中已经做过处理, 从special权限中移除
+             * 因此这里不用再单独针对版本做判断处理
+             */
             if (pb.shouldRequestBackgroundLocationPermission()) {
                 if (PermissionX.isGranted(pb.activity, RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)) {
                     pb.grantedPermissions.add(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
@@ -76,8 +80,7 @@ internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTas
             }
 
             /**
-             * 针对低于M的版本已做了处理，具体详见
-             * @see RequestSystemAlertWindowPermission
+             * 针对低于M的版本已做了处理，从special中移除，默认授予权限，具体详见[RequestSystemAlertWindowPermission]
              * 由于canDrawOverlays是大于M版本才有的api，因此需要限制到 M才判断，M以下默认授予权限
              */
 
@@ -92,8 +95,7 @@ internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTas
                 }
             }
             /**
-             * 针对低于M的版本已做了处理，具体详见
-             * @see RequestWriteSettingsPermission
+             * 针对低于M的版本已做了处理，从special中移除，默认授予权限，具体详见[RequestWriteSettingsPermission]
              * 由于canWrite是大于M版本才有的api，因此需要限制到 M才判断，M以下默认授予权限
              */
             if (pb.shouldRequestWriteSettingsPermission()
@@ -107,6 +109,10 @@ internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTas
                 }
             }
 
+            /**
+             * 针对低于R版本已经做了处理， 从special中移除， 具体详见[RequestManageExternalStoragePermission]
+             * Environment.isExternalStorageManager()为R以上版本才有的api
+             */
             if (pb.shouldRequestManageExternalStoragePermission()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
                     Environment.isExternalStorageManager()) {
@@ -117,20 +123,24 @@ internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTas
                     pb.grantedPermissions.remove(RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE)
                 }
             }
-            if (pb.shouldRequestInstallPackagesPermission()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && pb.targetSdkVersion >= Build.VERSION_CODES.O) {
-                    if (pb.activity.packageManager.canRequestPackageInstalls()) {
-                        pb.grantedPermissions.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
-                        deniedSet.remove(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
-                    } else {
-                        deniedSet.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
-                        pb.grantedPermissions.remove(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
-                    }
+
+            /**
+             * 低于O版本的已经从special中移除，具体详见[RequestInstallPackagesPermission]
+             * canRequestPackageInstalls()为 O及以上版本才有的api
+             */
+            if (pb.shouldRequestInstallPackagesPermission() &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && pb.targetSdkVersion >= Build.VERSION_CODES.O) {
+                if (pb.activity.packageManager.canRequestPackageInstalls()) {
+                    pb.grantedPermissions.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
+                    deniedSet.remove(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
                 } else {
                     deniedSet.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
                     pb.grantedPermissions.remove(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
                 }
             }
+            /**
+             * 主要是低于13版本的处理，高于13版本的该权限在[RequestNormalPermissions]中当正常运行时权限处理
+             */
             if (pb.shouldRequestNotificationPermission()) {
                 if (PermissionX.areNotificationsEnabled(pb.activity)) {
                     pb.grantedPermissions.add(PermissionX.permission.POST_NOTIFICATIONS)
@@ -140,6 +150,11 @@ internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTas
                     pb.grantedPermissions.remove(PermissionX.permission.POST_NOTIFICATIONS)
                 }
             }
+
+            /**
+             * 对于33以下版本无后台身体传感器权限，在[RequestBodySensorsBackgroundPermission]中已经做过处理, 从special权限中移除
+             * 因此这里不用再单独针对版本做判断处理
+             */
             if (pb.shouldRequestBodySensorsBackgroundPermission()) {
                 if (PermissionX.isGranted(pb.activity, RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)) {
                     pb.grantedPermissions.add(RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)

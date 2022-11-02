@@ -33,11 +33,20 @@ internal class RequestBodySensorsBackgroundPermission internal constructor(permi
 
     override fun request() {
         if (pb.shouldRequestBodySensorsBackgroundPermission()) {
+            val bodySensorGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                PermissionX.isGranted(pb.activity, Manifest.permission.BODY_SENSORS)
+            } else {
+                false
+            }
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 // If app runs under Android T, there's no BODY_SENSORS_BACKGROUND permissions.
                 // We remove it from request list, but will append it to the request callback as denied permission.
                 pb.specialPermissions.remove(BODY_SENSORS_BACKGROUND)
-                pb.permissionsWontRequest.add(BODY_SENSORS_BACKGROUND)
+                if(bodySensorGranted) {
+                    pb.grantedPermissions.add(BODY_SENSORS_BACKGROUND)
+                }else {
+                    pb.permissionsWontRequest.add(BODY_SENSORS_BACKGROUND)
+                }
                 finish()
                 return
             }
@@ -45,11 +54,6 @@ internal class RequestBodySensorsBackgroundPermission internal constructor(permi
                 // BODY_SENSORS_BACKGROUND has already granted, we can finish this task now.
                 finish()
                 return
-            }
-            val bodySensorGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                PermissionX.isGranted(pb.activity, Manifest.permission.BODY_SENSORS)
-            } else {
-                false
             }
             if (bodySensorGranted) {
                 if (pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) {

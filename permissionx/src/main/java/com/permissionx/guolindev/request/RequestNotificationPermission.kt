@@ -23,8 +23,8 @@ import com.permissionx.guolindev.PermissionX
  * @since 2022/8/21
  *
  * https://developer.android.google.cn/about/versions/13/changes/notification-permission
- * 从Android 13开始弹通知栏需要像使用运行时权限一样申请运行时权限，在PermissionBuilder时已经做了处理变为 normalPermission
- * 这里单独处理主要是为了兼容低版本的处理，低于13版本默认授予通知栏权限，如果拒绝了只能去权限设置页面，而且通知栏权限设置是一个单独的权限页面，便于跳转处理
+ * 从Android 13开始弹通知栏需要像使用运行时权限一样申请运行时权限，在PermissionBuilder中针对Android 13及以上版本已经做了处理变为 normalPermission
+ * 这里单独处理主要是为了兼容低版本（低于13的版本）的处理，低于13版本默认授予通知栏权限，如果拒绝了只能去权限设置页面，而且通知栏权限设置是一个单独的权限页面，便于跳转处理
  * 因此这里单独独立出来进行处理
  *
  */

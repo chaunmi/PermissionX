@@ -15,11 +15,21 @@
  */
 package com.permissionx.guolindev.request
 
+import android.Manifest
 import android.os.Build
 import android.os.Environment
+import com.permissionx.guolindev.PermissionX
 
 /**
  * Implementation for request android.permission.MANAGE_EXTERNAL_STORAGE.
+ *
+ * R版本新加的权限
+ * https://developer.android.google.cn/about/versions/11/privacy/storage
+ * https://developer.android.google.cn/training/data-storage/manage-all-files
+ * 理论上等同于 READ_EXTERNAL_STORAGE 和 WRITE_EXTERNAL_STORAGE权限，在R以上只需要申请 MANAGE_EXTERNAL_STORAGE 权限，在R以下
+ * 需要申请READ_EXTERNAL_STORAGE 和 WRITE_EXTERNAL_STORAGE权限，不能同时申请，因为且申请逻辑不同，MANAGE_EXTERNAL_STORAGE是跳到一个单独的页面授权
+ * 而READ_EXTERNAL_STORAGE 和 WRITE_EXTERNAL_STORAGE是弹窗授权，如果同时申请将会出现两次授权提示
+ *
  *
  * @author guolin
  * @since 2021/3/1
@@ -28,7 +38,25 @@ internal class RequestManageExternalStoragePermission internal constructor(permi
     BaseTask(permissionBuilder) {
 
     override fun request() {
-        if (pb.shouldRequestManageExternalStoragePermission() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (pb.shouldRequestManageExternalStoragePermission()) {
+
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                pb.specialPermissions.remove(MANAGE_EXTERNAL_STORAGE)
+                /**
+                 * 对于小于R版本 READ_EXTERNAL_STORAGE和WRITE_EXTERNAL_STORAGE的权限与MANAGE_EXTERNAL_STORAGE相当
+                 * https://juejin.cn/post/7053453973990146056#heading-1
+                 */
+                val readExternalPermission = PermissionX.isGranted(pb.activity, Manifest.permission.READ_EXTERNAL_STORAGE)
+                val writeExternalPermission = PermissionX.isGranted(pb.activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if(readExternalPermission && writeExternalPermission) {
+                    pb.grantedPermissions.add(MANAGE_EXTERNAL_STORAGE)
+                }else {
+                    pb.permissionsWontRequest.add(MANAGE_EXTERNAL_STORAGE)
+                }
+                finish()
+                return
+            }
+
             if (Environment.isExternalStorageManager()) {
                 // MANAGE_EXTERNAL_STORAGE permission has already granted, we can finish this task now.
                 finish()
