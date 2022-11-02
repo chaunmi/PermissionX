@@ -33,11 +33,20 @@ import com.permissionx.guolindev.request.RequestManageExternalStoragePermission
  *
  */
 val allSpecialPermissions = setOf(
-    RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION,
     Manifest.permission.SYSTEM_ALERT_WINDOW,
     Manifest.permission.WRITE_SETTINGS,
     RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE,
+    /**
+     * 系统中也不是特殊权限，但是需要单独跳转，具体可参见
+     * @see RequestInstallPackagesPermission
+     */
     RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES,
+
+    /**
+     * 以下在系统定义中为非特殊权限
+     */
+    //https://developer.android.com/about/versions/11/privacy/location#background-location
+    RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION,
     //https://developer.android.google.cn/about/versions/13/changes/notification-permission
     PermissionX.permission.POST_NOTIFICATIONS,
     RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND,

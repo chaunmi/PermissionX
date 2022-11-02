@@ -725,7 +725,9 @@ class PermissionBuilder(
             if (osVersion >= Build.VERSION_CODES.TIRAMISU && targetSdkVersion >= Build.VERSION_CODES.TIRAMISU) {
                 // If we request POST_NOTIFICATIONS on TIRAMISU or above and targetSdkVersion >= TIRAMISU,
                 // We don't need to request specially, just request as normal permission.
-                // 从Android 13开始弹通知栏需要像使用运行时权限一样申请运行时权限
+                /**
+                 *   从Android 13开始弹通知栏需要像使用运行时权限一样申请运行时权限，低于13版本默认授予通知栏权限，如果拒绝了只能去权限设置页面
+                  */
                 specialPermissionSet.remove(PermissionX.permission.POST_NOTIFICATIONS)
                 normalPermissionSet.add(PermissionX.permission.POST_NOTIFICATIONS)
             }

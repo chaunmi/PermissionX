@@ -23,6 +23,11 @@ import android.os.Build
  *
  * @author guolin
  * @since 2021/9/18
+ *
+ * 安装未知应用授权是从Android 8.0开始的，因此可以写Android8.0 到 10.0 间跳转到授权页面，其他版本则直接安装。
+ * Android 11跳转到授权安装未知来源应用页面，如果操作授权则当前app会被系统杀死，貌似可以直接安装，由系统弹出授权安装的弹窗。（TODO 需要验证）
+ * Android 12及以上可直接安装，系统会自动弹出授权弹窗。
+ *
  */
 internal class RequestInstallPackagesPermission internal constructor(permissionBuilder: PermissionBuilder) :
     BaseTask(permissionBuilder) {

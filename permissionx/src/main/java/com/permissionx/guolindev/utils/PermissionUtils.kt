@@ -38,6 +38,7 @@ object PermissionUtils {
                 equalsPermission(permission, Permission.SYSTEM_ALERT_WINDOW) ||
                 equalsPermission(permission, Permission.WRITE_SETTINGS) ||
                 equalsPermission(permission, Permission.POST_NOTIFICATIONS) ||
+
                 equalsPermission(permission, Permission.PACKAGE_USAGE_STATS) ||
                 equalsPermission(permission, Permission.SCHEDULE_EXACT_ALARM) ||
                 equalsPermission(permission, Permission.BIND_NOTIFICATION_LISTENER_SERVICE) ||
@@ -86,14 +87,14 @@ object PermissionUtils {
     /**
      * 延迟一段时间执行
      */
-    fun postDelayed(runnable: Runnable?, delayMillis: Long) {
-        HANDLER.postDelayed(runnable!!, delayMillis)
+    fun postDelayed(runnable: Runnable, delayMillis: Long) {
+        HANDLER.postDelayed(runnable, delayMillis)
     }
 
     /**
      * 延迟一段时间执行 OnActivityResult，避免有些机型明明授权了，但还是回调失败的问题
      */
-    fun postActivityResult(permissions: List<String?>?, runnable: Runnable?) {
+    fun postActivityResult(permissions: List<String?>?, runnable: Runnable) {
         var delayMillis: Long
         delayMillis = if (AndroidVersion.isAndroid11) {
             200
@@ -119,7 +120,7 @@ object PermissionUtils {
                 delayMillis = 1000
             }
         }
-        HANDLER.postDelayed(runnable!!, delayMillis)
+        HANDLER.postDelayed(runnable, delayMillis)
     }
 
     /**

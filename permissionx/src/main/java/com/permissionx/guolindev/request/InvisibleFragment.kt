@@ -347,12 +347,16 @@ class InvisibleFragment : Fragment() {
                     // Denied permission can turn into permanent denied permissions, but permanent denied permission can not turn into denied permissions.
                     val shouldShowRationale = shouldShowRequestPermissionRationale(permission)
                     if (shouldShowRationale) {
-                        //拒绝，还可以弹窗解释一下，然后再申请权限
+                        /**
+                         * 拒绝，还可以弹窗解释一下，然后再申请权限
+                         */
                         showReasonList.add(permission)
                         pb.deniedPermissions.add(permission)
                         // So there's no need to remove the current permission from permanentDeniedPermissions because it won't be there.
                     } else {
-                        // 永久拒绝，只能去权限设置页面开启了
+                        /**
+                         * 永久拒绝，只能去权限设置页面开启了
+                         */
                         forwardList.add(permission)
                         pb.permanentDeniedPermissions.add(permission)
                         // We must remove the current permission from deniedPermissions because it is permanent denied permission now.
@@ -377,6 +381,9 @@ class InvisibleFragment : Fragment() {
             } else {
                 var shouldFinishTheTask = true // Indicate if we should finish the task
                 // If explainReasonCallback is not null and there are denied permissions. Try the ExplainReasonCallback.
+                /**
+                 * 弹窗解释一下
+                 */
                 if ((pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) && showReasonList.isNotEmpty()) {
                     shouldFinishTheTask =
                         false // shouldn't because ExplainReasonCallback handles it
@@ -394,6 +401,9 @@ class InvisibleFragment : Fragment() {
                     // store these permanently denied permissions or they will be lost when request again.
                     pb.tempPermanentDeniedPermissions.addAll(forwardList)
                 } else if (pb.forwardToSettingsCallback != null && (forwardList.isNotEmpty() || pb.tempPermanentDeniedPermissions.isNotEmpty())) {
+                    /**
+                     * 跳转到设置页面
+                     */
                     shouldFinishTheTask =
                         false // shouldn't because ForwardToSettingsCallback handles it
                     pb.tempPermanentDeniedPermissions.clear() // no need to store them anymore once onForwardToSettings callback.
@@ -419,6 +429,7 @@ class InvisibleFragment : Fragment() {
 
     /**
      * Handle result of ACCESS_BACKGROUND_LOCATION permission request.
+     * 就是正常运行时权限，因此和onRequestNormalPermissionsResult一样
      */
     private fun onRequestBackgroundLocationPermissionResult(granted: Boolean) {
         if (checkForGC()) {
@@ -474,6 +485,7 @@ class InvisibleFragment : Fragment() {
 
     /**
      * Handle result of SYSTEM_ALERT_WINDOW permission request.
+     * 特殊权限，因为涉及到跳转到具体页面进行授权，因此处理和onRequestNormalPermissionsResult不一样，后面的几个特殊权限也一样
      */
     private fun onRequestSystemAlertWindowPermissionResult() {
         if (checkForGC()) {
@@ -592,6 +604,7 @@ class InvisibleFragment : Fragment() {
 
     /**
      * Handle result of notification permission request.
+     *
      */
     private fun onRequestNotificationPermissionResult() {
         if (checkForGC()) {
@@ -623,6 +636,7 @@ class InvisibleFragment : Fragment() {
 
     /**
      * Handle result of BODY_SENSORS_BACKGROUND permission request.
+     * 就是正常运行时权限，因此和onRequestNormalPermissionsResult一样
      */
     private fun onRequestBodySensorsBackgroundPermissionResult(granted: Boolean) {
         if (checkForGC()) {

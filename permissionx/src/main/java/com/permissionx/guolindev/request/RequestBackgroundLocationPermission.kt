@@ -23,6 +23,18 @@ import com.permissionx.guolindev.PermissionX
  * Implementation for request ACCESS_BACKGROUND_LOCATION permission.
  * @author guolin
  * @since 2020/6/10
+ *
+ * Q 新增的权限，低版本上无此权限
+ * https://developer.android.google.cn/about/versions/10/privacy/changes#app-access-device-location
+ * https://developer.android.com/about/versions/11/privacy/location#background-location
+ *
+ * https://developer.android.com/training/location/permissions?hl=zh-cn
+ * 您应该执行递增位置信息请求。如果您的应用以 Android 11 或更高版本为目标平台，系统会强制执行此最佳做法。
+ * 如果您同时请求在前台访问位置信息的权限和在后台访问位置信息的权限，系统会忽略该请求，且不会向您的应用授予其中的任一权限。
+ *
+ * ACCESS_BACKGROUND_LOCATION 和其他非定位权限定位掺杂在一起申请，在 Android 11 上会出现不申请直接被拒绝的情况。
+ *
+ * 因此这里需要单独拎出来作为特殊权限处理，单独申请，但其权限申请和运行时权限申请是一样的
  */
 internal class RequestBackgroundLocationPermission internal constructor(permissionBuilder: PermissionBuilder)
     : BaseTask(permissionBuilder) {

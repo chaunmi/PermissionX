@@ -23,6 +23,10 @@ import com.permissionx.guolindev.PermissionX
  * Implementation for request ACCESS_BACKGROUND_LOCATION permission.
  * @author guolin
  * @since 2022/8/26
+ * https://developer.android.google.cn/about/versions/13/behavior-changes-13#body-sensors-background-permission
+ * 如果您的应用以 Android 13 为目标平台，并且在后台运行时需要访问身体传感器信息，那么除了现有的 BODY_SENSORS 权限外，您还必须声明新的 BODY_SENSORS_BACKGROUND 权限。
+ *
+ * 这里主要是多了一个BODY_SENSORS的处理，因此单独独立出来，但其权限申请和运行时权限申请是一样的
  */
 internal class RequestBodySensorsBackgroundPermission internal constructor(permissionBuilder: PermissionBuilder)
     : BaseTask(permissionBuilder) {

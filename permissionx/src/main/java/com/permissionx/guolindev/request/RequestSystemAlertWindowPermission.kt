@@ -30,6 +30,10 @@ internal class RequestSystemAlertWindowPermission internal constructor(permissio
 
     override fun request() {
         if (pb.shouldRequestSystemAlertWindowPermission()) {
+            /**
+             * 由于canDrawOverlays是大于M版本才有的api，因此需要限制到 M才判断，M以下默认授予权限
+             */
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && pb.targetSdkVersion >= Build.VERSION_CODES.M) {
                 if (Settings.canDrawOverlays(pb.activity)) {
                     // SYSTEM_ALERT_WINDOW permission has already granted, we can finish this task now.

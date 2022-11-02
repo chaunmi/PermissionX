@@ -399,6 +399,7 @@ internal object PermissionChecker {
             // 必须要申请前台传感器权限才能申请后台传感器权限
             throw IllegalArgumentException("Applying for background sensor permissions must contain " + Permission.BODY_SENSORS)
         }
+
         for (permission: String? in requestPermissions) {
             if (PermissionUtils.equalsPermission(
                     permission,
@@ -411,6 +412,7 @@ internal object PermissionChecker {
                             " and " + Permission.ACCESS_BACKGROUND_LOCATION.toString() + " at the same time is not supported")
                 )
             }
+            //TODO 需要验证是否不支持同时访问媒体位置权限和后台传感器权限
             if (PermissionUtils.equalsPermission(permission, Permission.ACCESS_MEDIA_LOCATION)) {
                 // 不支持同时申请后台传感器权限和获取媒体位置权限
                 throw IllegalArgumentException(
@@ -472,24 +474,24 @@ internal object PermissionChecker {
                         Permission.ACCESS_FINE_LOCATION
             )
         }
-//        for (permission: String? in requestPermissions) {
-//            if ((PermissionUtils.equalsPermission(permission, Permission.ACCESS_FINE_LOCATION)
-//                        || PermissionUtils.equalsPermission(
-//                    permission,
-//                    Permission.ACCESS_COARSE_LOCATION
-//                )
-//                        || PermissionUtils.equalsPermission(
-//                    permission,
-//                    Permission.ACCESS_BACKGROUND_LOCATION
-//                ))
-//            ) {
-//                continue
-//            }
-//            throw IllegalArgumentException(
-//                "Because it includes background location permissions, " +
-//                        "do not apply for permissions unrelated to location"
-//            )
-//        }
+        for (permission: String? in requestPermissions) {
+            if ((PermissionUtils.equalsPermission(permission, Permission.ACCESS_FINE_LOCATION)
+                        || PermissionUtils.equalsPermission(
+                    permission,
+                    Permission.ACCESS_COARSE_LOCATION
+                )
+                        || PermissionUtils.equalsPermission(
+                    permission,
+                    Permission.ACCESS_BACKGROUND_LOCATION
+                ))
+            ) {
+                continue
+            }
+            throw IllegalArgumentException(
+                "Because it includes background location permissions, " +
+                        "do not apply for permissions unrelated to location"
+            )
+        }
     }
 
     /**

@@ -21,6 +21,8 @@ import android.os.Environment
 import android.provider.Settings
 import com.permissionx.guolindev.PermissionX
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 /**
  * Define a BaseTask to implement the duplicate logic codes. No need to implement them in every task.
@@ -53,69 +55,102 @@ internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTas
         // If there's next task, then run it.
         next?.request() ?: run {
             // If there's no next task, finish the request process and notify the result
-            val deniedList: MutableList<String> = ArrayList()
-            deniedList.addAll(pb.deniedPermissions)
-            deniedList.addAll(pb.permanentDeniedPermissions)
-            deniedList.addAll(pb.permissionsWontRequest)
+            val deniedSet: MutableSet<String> = HashSet()
+            deniedSet.addAll(pb.deniedPermissions)
+            deniedSet.addAll(pb.permanentDeniedPermissions)
+            deniedSet.addAll(pb.permissionsWontRequest)
+
+            /**
+             * 最后再check一下是否已授权
+             * TODO 这里逻辑可以优化以下，针对低版本的情况，比如MANAGE_EXTERNAL_STORAGE和REQUEST_INSTALL_PACKAGES的处理
+             */
+
             if (pb.shouldRequestBackgroundLocationPermission()) {
                 if (PermissionX.isGranted(pb.activity, RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)) {
                     pb.grantedPermissions.add(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
+                    deniedSet.remove(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
                 } else {
-                    deniedList.add(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
+                    deniedSet.add(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
+                    pb.grantedPermissions.remove(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
                 }
             }
+
+            /**
+             * 针对低于M的版本已做了处理，具体详见
+             * @see RequestSystemAlertWindowPermission
+             * 由于canDrawOverlays是大于M版本才有的api，因此需要限制到 M才判断，M以下默认授予权限
+             */
+
             if (pb.shouldRequestSystemAlertWindowPermission()
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && pb.targetSdkVersion >= Build.VERSION_CODES.M) {
                 if (Settings.canDrawOverlays(pb.activity)) {
                     pb.grantedPermissions.add(Manifest.permission.SYSTEM_ALERT_WINDOW)
+                    deniedSet.remove(Manifest.permission.SYSTEM_ALERT_WINDOW)
                 } else {
-                    deniedList.add(Manifest.permission.SYSTEM_ALERT_WINDOW)
+                    deniedSet.add(Manifest.permission.SYSTEM_ALERT_WINDOW)
+                    pb.grantedPermissions.remove(Manifest.permission.SYSTEM_ALERT_WINDOW)
                 }
             }
+            /**
+             * 针对低于M的版本已做了处理，具体详见
+             * @see RequestWriteSettingsPermission
+             * 由于canWrite是大于M版本才有的api，因此需要限制到 M才判断，M以下默认授予权限
+             */
             if (pb.shouldRequestWriteSettingsPermission()
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && pb.targetSdkVersion >= Build.VERSION_CODES.M) {
                 if (Settings.System.canWrite(pb.activity)) {
                     pb.grantedPermissions.add(Manifest.permission.WRITE_SETTINGS)
+                    deniedSet.remove(Manifest.permission.WRITE_SETTINGS)
                 } else {
-                    deniedList.add(Manifest.permission.WRITE_SETTINGS)
+                    deniedSet.add(Manifest.permission.WRITE_SETTINGS)
+                    pb.grantedPermissions.remove(Manifest.permission.WRITE_SETTINGS)
                 }
             }
+
             if (pb.shouldRequestManageExternalStoragePermission()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
                     Environment.isExternalStorageManager()) {
                     pb.grantedPermissions.add(RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE)
+                    deniedSet.remove(RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE)
                 } else {
-                    deniedList.add(RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE)
+                    deniedSet.add(RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE)
+                    pb.grantedPermissions.remove(RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE)
                 }
             }
             if (pb.shouldRequestInstallPackagesPermission()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && pb.targetSdkVersion >= Build.VERSION_CODES.O) {
                     if (pb.activity.packageManager.canRequestPackageInstalls()) {
                         pb.grantedPermissions.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
+                        deniedSet.remove(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
                     } else {
-                        deniedList.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
+                        deniedSet.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
+                        pb.grantedPermissions.remove(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
                     }
                 } else {
-                    deniedList.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
+                    deniedSet.add(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
+                    pb.grantedPermissions.remove(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
                 }
             }
             if (pb.shouldRequestNotificationPermission()) {
                 if (PermissionX.areNotificationsEnabled(pb.activity)) {
                     pb.grantedPermissions.add(PermissionX.permission.POST_NOTIFICATIONS)
+                    deniedSet.remove(PermissionX.permission.POST_NOTIFICATIONS)
                 } else {
-                    deniedList.add(PermissionX.permission.POST_NOTIFICATIONS)
+                    deniedSet.add(PermissionX.permission.POST_NOTIFICATIONS)
+                    pb.grantedPermissions.remove(PermissionX.permission.POST_NOTIFICATIONS)
                 }
             }
             if (pb.shouldRequestBodySensorsBackgroundPermission()) {
                 if (PermissionX.isGranted(pb.activity, RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)) {
                     pb.grantedPermissions.add(RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)
+                    deniedSet.remove(RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)
                 } else {
-                    deniedList.add(RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)
+                    deniedSet.add(RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)
+                    pb.grantedPermissions.remove(RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)
                 }
             }
-            if (pb.requestCallback != null) {
-                pb.requestCallback!!.onResult(deniedList.isEmpty(), ArrayList(pb.grantedPermissions), deniedList)
-            }
+
+            pb.requestCallback?.onResult(deniedSet.isEmpty(), ArrayList(pb.grantedPermissions), ArrayList(deniedSet))
 
             pb.endRequest()
         }

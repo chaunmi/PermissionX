@@ -22,6 +22,8 @@ import java.util.*
  * Implementation for request normal permissions.
  * @author guolin
  * @since 2020/6/10
+ *
+ * 如果被永久拒绝了，统一跳到应用详情页
  */
 internal class RequestNormalPermissions internal constructor(permissionBuilder: PermissionBuilder) :
     BaseTask(permissionBuilder) {
