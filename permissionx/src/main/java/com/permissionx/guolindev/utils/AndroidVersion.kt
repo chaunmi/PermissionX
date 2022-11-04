@@ -51,71 +51,71 @@ object AndroidVersion {
      * 是否是 Android 13 及以上版本
      */
     val isAndroid13: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_13
+        get() = Build.VERSION.SDK_INT >= ANDROID_13
 
     /**
      * 是否是 Android 12 及以上版本
      */
     val isAndroid12: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_12
+        get() = Build.VERSION.SDK_INT >= ANDROID_12
 
     /**
      * 是否是 Android 11 及以上版本
      */
     val isAndroid11: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_11
+        get() = Build.VERSION.SDK_INT >= ANDROID_11
 
     /**
      * 是否是 Android 10 及以上版本
      */
     val isAndroid10: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_10
+        get() = Build.VERSION.SDK_INT >= ANDROID_10
 
     /**
      * 是否是 Android 9.0 及以上版本
      */
     val isAndroid9: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_9
+        get() = Build.VERSION.SDK_INT >= ANDROID_9
 
     /**
      * 是否是 Android 8.0 及以上版本
      */
     val isAndroid8: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_8
+        get() = Build.VERSION.SDK_INT >= ANDROID_8
 
     /**
      * 是否是 Android 6.0 及以上版本
      */
     val isAndroid6: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_6
+        get() = Build.VERSION.SDK_INT >= ANDROID_6
 
     /**
      * 是否是 Android 5.0 及以上版本
      */
     val isAndroid5_1: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_5_1
+        get() = Build.VERSION.SDK_INT >= ANDROID_5_1
 
     /**
      * 是否是 Android 5.0 及以上版本
      */
     val isAndroid5: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_5
+        get() = Build.VERSION.SDK_INT >= ANDROID_5
 
     /**
      * 是否是 Android 4.3 及以上版本
      */
     val isAndroid4_3: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_4_3
+        get() = Build.VERSION.SDK_INT >= ANDROID_4_3
 
     /**
      * 是否是 Android 4.2 及以上版本
      */
     val isAndroid4_2: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_4_2
+        get() = Build.VERSION.SDK_INT >= ANDROID_4_2
 
     /**
      * 是否是 Android 4.0 及以上版本
      */
     val isAndroid4: Boolean
-        get() = getRuntimeAndroidVersion() >= ANDROID_4_0
+        get() = Build.VERSION.SDK_INT >= ANDROID_4_0
 }

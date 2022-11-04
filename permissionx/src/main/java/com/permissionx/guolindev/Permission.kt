@@ -3,70 +3,11 @@ package com.permissionx.guolindev
 import android.Manifest
 
 object Permission {
-    /**
-     * 闹钟权限（特殊权限，Android 12 新增的权限）
-     *
-     * 需要注意的是：这个权限和其他特殊权限不同的是，默认已经是授予状态，用户也可以手动撤销授权
-     * 官方文档介绍：https://developer.android.google.cn/about/versions/12/behavior-changes-12?hl=zh_cn#exact-alarm-permission
-     */
-    const val SCHEDULE_EXACT_ALARM = "android.permission.SCHEDULE_EXACT_ALARM"
 
     /**
-     * 文件管理权限（特殊权限，Android 11 新增的权限）
-     *
-     * 为了兼容 Android 11 以下版本，需要在清单文件中注册
-     * [Permission.READ_EXTERNAL_STORAGE] 和 [Permission.WRITE_EXTERNAL_STORAGE] 权限
-     *
-     * 如果你的应用需要上架 GooglePlay，那么需要详细查看：https://support.google.com/googleplay/android-developer/answer/9956427
+     *  ----------------------- Android 13 新增权限 begin ---------------------------------
      */
-    const val MANAGE_EXTERNAL_STORAGE = "android.permission.MANAGE_EXTERNAL_STORAGE"
 
-    /**
-     * 安装应用权限（特殊权限，Android 8.0 新增的权限）
-     *
-     * Android 11 特性调整，安装外部来源应用需要重启 App：https://cloud.tencent.com/developer/news/637591
-     * 经过实践，Android 12 已经修复了此问题，授权或者取消授权后应用并不会重启
-     */
-    const val REQUEST_INSTALL_PACKAGES = "android.permission.REQUEST_INSTALL_PACKAGES"
-
-    /**
-     * 画中画权限（特殊权限，Android 8.0 新增的权限，注意此权限不需要在清单文件中注册也能申请）
-     *
-     * 需要注意的是：这个权限和其他特殊权限不同的是，默认已经是授予状态，用户也可以手动撤销授权
-     */
-    const val PICTURE_IN_PICTURE = "android.permission.PICTURE_IN_PICTURE"
-
-    /**
-     * 悬浮窗权限（特殊权限，Android 6.0 新增的权限）
-     *
-     * 在 Android 10 及之前的版本能跳转到应用悬浮窗设置页面，而在 Android 11 及之后的版本只能跳转到系统设置悬浮窗管理列表了
-     * 官方解释：https://developer.android.google.cn/reference/android/provider/Settings#ACTION_MANAGE_OVERLAY_PERMISSION
-     */
-    const val SYSTEM_ALERT_WINDOW = "android.permission.SYSTEM_ALERT_WINDOW"
-
-    /** 系统设置权限（特殊权限，Android 6.0 新增的权限）  */
-    const val WRITE_SETTINGS = "android.permission.WRITE_SETTINGS"
-
-    /** 请求忽略电池优化选项权限（特殊权限，Android 6.0 新增的权限） */
-    const val REQUEST_IGNORE_BATTERY_OPTIMIZATIONS =
-        "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
-
-    /** 勿扰权限，可控制手机响铃模式【静音，震动】（特殊权限，Android 6.0 新增的权限） */
-    const val ACCESS_NOTIFICATION_POLICY = "android.permission.ACCESS_NOTIFICATION_POLICY"
-
-    /** 查看应用使用情况权限，简称使用统计权限（特殊权限，Android 5.0 新增的权限）  */
-    const val PACKAGE_USAGE_STATS = "android.permission.PACKAGE_USAGE_STATS"
-
-    /** 通知栏监听权限（特殊权限，Android 4.3 新增的权限，注意此权限不需要在清单文件中注册也能申请）  */
-    const val BIND_NOTIFICATION_LISTENER_SERVICE =
-        "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-
-    /** VPN 权限（特殊权限，Android 4.0 新增的权限，注意此权限不需要在清单文件中注册也能申请）  */
-    const val BIND_VPN_SERVICE = "android.permission.BIND_VPN_SERVICE"
-
-    /** 通知栏权限（特殊权限，注意此权限不需要在清单文件中注册也能申请）  */
-    const val NOTIFICATION_SERVICE = "android.permission.NOTIFICATION_SERVICE"
-    /* ------------------------------------ 我是一条华丽的分割线 ------------------------------------ */
     /**
      * 发送通知权限（Android 13.0 新增的权限）
      *
@@ -116,6 +57,25 @@ object Permission {
      */
     const val READ_MEDIA_AUDIO = "android.permission.READ_MEDIA_AUDIO"
 
+
+
+    /**
+     *  ----------------------- Android 13 新增权限 end ---------------------------------
+     */
+
+
+    /**
+     *  ----------------------- Android 12 新增权限 begin ---------------------------------
+     */
+
+    /**
+     * 闹钟权限（特殊权限，Android 12 新增的权限）
+     *
+     * 需要注意的是：这个权限和其他特殊权限不同的是，默认已经是授予状态，用户也可以手动撤销授权
+     * 官方文档介绍：https://developer.android.google.cn/about/versions/12/behavior-changes-12?hl=zh_cn#exact-alarm-permission
+     */
+    const val SCHEDULE_EXACT_ALARM = "android.permission.SCHEDULE_EXACT_ALARM"
+
     /**
      * 蓝牙扫描权限（Android 12.0 新增的权限）
      *
@@ -144,6 +104,36 @@ object Permission {
     const val BLUETOOTH_ADVERTISE = "android.permission.BLUETOOTH_ADVERTISE"
 
     /**
+     *  ----------------------- Android 12 新增权限 end ---------------------------------
+     */
+
+    /**
+     *  ----------------------- Android 11 新增权限 begin ---------------------------------
+     */
+
+    /**
+     * 文件管理权限（特殊权限，Android 11 新增的权限）
+     *
+     * 为了兼容 Android 11 以下版本，需要在清单文件中注册
+     * [Permission.READ_EXTERNAL_STORAGE] 和 [Permission.WRITE_EXTERNAL_STORAGE] 权限
+     *
+     * 如果你的应用需要上架 GooglePlay，那么需要详细查看：https://support.google.com/googleplay/android-developer/answer/9956427
+     */
+    const val MANAGE_EXTERNAL_STORAGE = "android.permission.MANAGE_EXTERNAL_STORAGE"
+
+    /**
+     *  ----------------------- Android 11 新增权限 end ---------------------------------
+     */
+
+
+
+
+    /**
+     *  ----------------------- Android 10 新增权限 begin ---------------------------------
+     */
+
+
+    /**
      * 在后台获取位置（Android 10.0 新增的权限）
      *
      * 需要注意的是：
@@ -169,8 +159,41 @@ object Permission {
      */
     const val ACCESS_MEDIA_LOCATION = "android.permission.ACCESS_MEDIA_LOCATION"
 
+    /**
+     *  ----------------------- Android 10 新增权限 end ---------------------------------
+     */
+
+    /**
+     *  ----------------------- Android 9 新增权限 begin ---------------------------------
+     */
+
     /** 允许呼叫应用继续在另一个应用中启动的呼叫（Android 9.0 新增的权限）  */
     const val ACCEPT_HANDOVER = "android.permission.ACCEPT_HANDOVER"
+
+
+    /**
+     *  ----------------------- Android 9 新增权限 end ---------------------------------
+     */
+
+
+    /**
+     *  ----------------------- Android 8 新增权限 begin ---------------------------------
+     */
+
+    /**
+     * 安装应用权限（特殊权限，Android 8.0 新增的权限）
+     *
+     * Android 11 特性调整，安装外部来源应用需要重启 App：https://cloud.tencent.com/developer/news/637591
+     * 经过实践，Android 12 已经修复了此问题，授权或者取消授权后应用并不会重启
+     */
+    const val REQUEST_INSTALL_PACKAGES = "android.permission.REQUEST_INSTALL_PACKAGES"
+
+    /**
+     * 画中画权限（特殊权限，Android 8.0 新增的权限，注意此权限不需要在清单文件中注册也能申请）
+     *
+     * 需要注意的是：这个权限和其他特殊权限不同的是，默认已经是授予状态，用户也可以手动撤销授权
+     */
+    const val PICTURE_IN_PICTURE = "android.permission.PICTURE_IN_PICTURE"
 
     /**
      * 读取手机号码（Android 8.0 新增的权限）
@@ -183,6 +206,54 @@ object Permission {
      * 接听电话（Android 8.0 新增的权限，Android 8.0 以下可以采用模拟耳机按键事件来实现接听电话，这种方式不需要权限）
      */
     const val ANSWER_PHONE_CALLS = "android.permission.ANSWER_PHONE_CALLS"
+
+/**
+ *  ----------------------- Android 8 新增权限 end ---------------------------------
+ */
+
+
+/**
+ *  ----------------------- Android 6 新增权限 begin ---------------------------------
+ */
+
+    /**
+     * 悬浮窗权限（特殊权限，Android 6.0 新增的权限）
+     *
+     * 在 Android 10 及之前的版本能跳转到应用悬浮窗设置页面，而在 Android 11 及之后的版本只能跳转到系统设置悬浮窗管理列表了
+     * 官方解释：https://developer.android.google.cn/reference/android/provider/Settings#ACTION_MANAGE_OVERLAY_PERMISSION
+     */
+    const val SYSTEM_ALERT_WINDOW = "android.permission.SYSTEM_ALERT_WINDOW"
+
+    /** 系统设置权限（特殊权限，Android 6.0 新增的权限）  */
+    const val WRITE_SETTINGS = "android.permission.WRITE_SETTINGS"
+
+    /** 请求忽略电池优化选项权限（特殊权限，Android 6.0 新增的权限） */
+    const val REQUEST_IGNORE_BATTERY_OPTIMIZATIONS =
+        "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+
+    /** 勿扰权限，可控制手机响铃模式【静音，震动】（特殊权限，Android 6.0 新增的权限） */
+    const val ACCESS_NOTIFICATION_POLICY = "android.permission.ACCESS_NOTIFICATION_POLICY"
+
+    /**
+     *  ----------------------- Android 6 新增权限 end ---------------------------------
+     */
+
+
+    /**
+     *  ----------------------- Android 5及以下权限 ---------------------------------
+     */
+
+    /** 查看应用使用情况权限，简称使用统计权限（特殊权限，Android 5.0 新增的权限）  */
+    const val PACKAGE_USAGE_STATS = "android.permission.PACKAGE_USAGE_STATS"
+
+    /** 通知栏监听权限（特殊权限，Android 4.3 新增的权限，注意此权限不需要在清单文件中注册也能申请）  */
+    const val BIND_NOTIFICATION_LISTENER_SERVICE =
+        "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+
+    /** VPN 权限（特殊权限，Android 4.0 新增的权限，注意此权限不需要在清单文件中注册也能申请）  */
+    const val BIND_VPN_SERVICE = "android.permission.BIND_VPN_SERVICE"
+
+
 
     /** 读取外部存储  */
     const val READ_EXTERNAL_STORAGE = "android.permission.READ_EXTERNAL_STORAGE"

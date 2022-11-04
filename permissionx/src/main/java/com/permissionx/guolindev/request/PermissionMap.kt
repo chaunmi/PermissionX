@@ -19,6 +19,7 @@ package com.permissionx.guolindev.dialog
 import android.Manifest
 import android.annotation.TargetApi
 import android.os.Build
+import com.permissionx.guolindev.Permission
 import com.permissionx.guolindev.PermissionX
 import com.permissionx.guolindev.request.RequestBackgroundLocationPermission
 import com.permissionx.guolindev.request.RequestBodySensorsBackgroundPermission
@@ -35,20 +36,20 @@ import com.permissionx.guolindev.request.RequestManageExternalStoragePermission
 val allSpecialPermissions = setOf(
     Manifest.permission.SYSTEM_ALERT_WINDOW,
     Manifest.permission.WRITE_SETTINGS,
-    RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE,
+    Permission.MANAGE_EXTERNAL_STORAGE,
     /**
      * 系统中也不是特殊权限，但是需要单独跳转，具体可参见[RequestInstallPackagesPermission]
      */
-    RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES,
+    Permission.REQUEST_INSTALL_PACKAGES,
 
     /**
      * 以下在系统定义中为非特殊权限
      */
     //https://developer.android.com/about/versions/11/privacy/location#background-location
-    RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION,
+    Permission.ACCESS_BACKGROUND_LOCATION,
     //https://developer.android.google.cn/about/versions/13/changes/notification-permission
-    PermissionX.permission.POST_NOTIFICATIONS,
-    RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND,
+    Permission.POST_NOTIFICATIONS,
+    Permission.BODY_SENSORS_BACKGROUND,
 )
 
 /**

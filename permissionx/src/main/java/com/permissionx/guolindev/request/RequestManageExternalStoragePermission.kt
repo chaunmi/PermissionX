@@ -18,6 +18,7 @@ package com.permissionx.guolindev.request
 import android.Manifest
 import android.os.Build
 import android.os.Environment
+import com.permissionx.guolindev.Permission
 import com.permissionx.guolindev.PermissionX
 
 /**
@@ -41,7 +42,7 @@ internal class RequestManageExternalStoragePermission internal constructor(permi
         if (pb.shouldRequestManageExternalStoragePermission()) {
 
             if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                pb.specialPermissions.remove(MANAGE_EXTERNAL_STORAGE)
+                pb.specialPermissions.remove(Permission.MANAGE_EXTERNAL_STORAGE)
                 /**
                  * 对于小于R版本 READ_EXTERNAL_STORAGE和WRITE_EXTERNAL_STORAGE的权限与MANAGE_EXTERNAL_STORAGE相当
                  * https://juejin.cn/post/7053453973990146056#heading-1
@@ -49,9 +50,9 @@ internal class RequestManageExternalStoragePermission internal constructor(permi
                 val readExternalPermission = PermissionX.isGranted(pb.activity, Manifest.permission.READ_EXTERNAL_STORAGE)
                 val writeExternalPermission = PermissionX.isGranted(pb.activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 if(readExternalPermission && writeExternalPermission) {
-                    pb.grantedPermissions.add(MANAGE_EXTERNAL_STORAGE)
+                    pb.grantedPermissions.add(Permission.MANAGE_EXTERNAL_STORAGE)
                 }else {
-                    pb.permissionsWontRequest.add(MANAGE_EXTERNAL_STORAGE)
+                    pb.permissionsWontRequest.add(Permission.MANAGE_EXTERNAL_STORAGE)
                 }
                 finish()
                 return
@@ -63,7 +64,7 @@ internal class RequestManageExternalStoragePermission internal constructor(permi
                 return
             }
             if (pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) {
-                val requestList = mutableListOf(MANAGE_EXTERNAL_STORAGE)
+                val requestList = mutableListOf(Permission.MANAGE_EXTERNAL_STORAGE)
                 if (pb.explainReasonCallbackWithBeforeParam != null) {
                     // callback ExplainReasonCallbackWithBeforeParam prior to ExplainReasonCallback
                     pb.explainReasonCallbackWithBeforeParam!!.onExplainReason(explainScope, requestList, true)
@@ -85,12 +86,5 @@ internal class RequestManageExternalStoragePermission internal constructor(permi
     override fun requestAgain(permissions: List<String>) {
         // don't care what the permissions param is, always request WRITE_SETTINGS permission.
         pb.requestManageExternalStoragePermissionNow(this)
-    }
-
-    companion object {
-        /**
-         * Define the const to compat with system lower than R.
-         */
-        const val MANAGE_EXTERNAL_STORAGE = "android.permission.MANAGE_EXTERNAL_STORAGE"
     }
 }

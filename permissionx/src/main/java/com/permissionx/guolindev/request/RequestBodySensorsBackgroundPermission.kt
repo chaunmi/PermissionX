@@ -17,6 +17,7 @@ package com.permissionx.guolindev.request
 
 import android.Manifest
 import android.os.Build
+import com.permissionx.guolindev.Permission
 import com.permissionx.guolindev.PermissionX
 
 /**
@@ -41,23 +42,23 @@ internal class RequestBodySensorsBackgroundPermission internal constructor(permi
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 // If app runs under Android T, there's no BODY_SENSORS_BACKGROUND permissions.
                 // We remove it from request list, but will append it to the request callback as denied permission.
-                pb.specialPermissions.remove(BODY_SENSORS_BACKGROUND)
+                pb.specialPermissions.remove(Permission.BODY_SENSORS_BACKGROUND)
                 if(bodySensorGranted) {
-                    pb.grantedPermissions.add(BODY_SENSORS_BACKGROUND)
+                    pb.grantedPermissions.add(Permission.BODY_SENSORS_BACKGROUND)
                 }else {
-                    pb.permissionsWontRequest.add(BODY_SENSORS_BACKGROUND)
+                    pb.permissionsWontRequest.add(Permission.BODY_SENSORS_BACKGROUND)
                 }
                 finish()
                 return
             }
-            if (PermissionX.isGranted(pb.activity, BODY_SENSORS_BACKGROUND)) {
+            if (PermissionX.isGranted(pb.activity, Permission.BODY_SENSORS_BACKGROUND)) {
                 // BODY_SENSORS_BACKGROUND has already granted, we can finish this task now.
                 finish()
                 return
             }
             if (bodySensorGranted) {
                 if (pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) {
-                    val requestList = mutableListOf(BODY_SENSORS_BACKGROUND)
+                    val requestList = mutableListOf(Permission.BODY_SENSORS_BACKGROUND)
                     if (pb.explainReasonCallbackWithBeforeParam != null) {
                         // callback ExplainReasonCallbackWithBeforeParam prior to ExplainReasonCallback
                         pb.explainReasonCallbackWithBeforeParam!!.onExplainReason(explainScope, requestList, true)
@@ -80,10 +81,4 @@ internal class RequestBodySensorsBackgroundPermission internal constructor(permi
         pb.requestBodySensorsBackgroundPermissionNow(this)
     }
 
-    companion object {
-        /**
-         * Define the const to compat with system lower than T.
-         */
-        const val BODY_SENSORS_BACKGROUND = "android.permission.BODY_SENSORS_BACKGROUND"
-    }
 }

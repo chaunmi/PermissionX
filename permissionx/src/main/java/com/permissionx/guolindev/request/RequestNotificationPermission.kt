@@ -15,6 +15,7 @@
  */
 package com.permissionx.guolindev.request
 
+import com.permissionx.guolindev.Permission
 import com.permissionx.guolindev.PermissionX
 
 /**
@@ -39,7 +40,7 @@ internal class RequestNotificationPermission internal constructor(permissionBuil
                 return
             }
             if (pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) {
-                val requestList = mutableListOf(PermissionX.permission.POST_NOTIFICATIONS)
+                val requestList = mutableListOf(Permission.POST_NOTIFICATIONS)
                 if (pb.explainReasonCallbackWithBeforeParam != null) {
                     // callback ExplainReasonCallbackWithBeforeParam prior to ExplainReasonCallback
                     pb.explainReasonCallbackWithBeforeParam!!.onExplainReason(explainScope, requestList, true)

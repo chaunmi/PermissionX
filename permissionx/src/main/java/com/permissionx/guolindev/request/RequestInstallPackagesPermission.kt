@@ -17,6 +17,7 @@ package com.permissionx.guolindev.request
 
 import android.Manifest
 import android.os.Build
+import com.permissionx.guolindev.Permission
 
 /**
  * Implementation for request android.permission.REQUEST_INSTALL_PACKAGES.
@@ -52,7 +53,7 @@ internal class RequestInstallPackagesPermission internal constructor(permissionB
                     return
                 }
                 if (pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) {
-                    val requestList = mutableListOf(REQUEST_INSTALL_PACKAGES)
+                    val requestList = mutableListOf(Permission.REQUEST_INSTALL_PACKAGES)
                     if (pb.explainReasonCallbackWithBeforeParam != null) {
                         // callback ExplainReasonCallbackWithBeforeParam prior to ExplainReasonCallback
                         pb.explainReasonCallbackWithBeforeParam!!.onExplainReason(explainScope, requestList, true)
@@ -65,8 +66,8 @@ internal class RequestInstallPackagesPermission internal constructor(permissionB
                     finish()
                 }
             }else {
-                pb.specialPermissions.remove(REQUEST_INSTALL_PACKAGES)
-                pb.grantedPermissions.add(REQUEST_INSTALL_PACKAGES)
+                pb.specialPermissions.remove(Permission.REQUEST_INSTALL_PACKAGES)
+                pb.grantedPermissions.add(Permission.REQUEST_INSTALL_PACKAGES)
                 finish()
             }
         } else {
@@ -78,12 +79,5 @@ internal class RequestInstallPackagesPermission internal constructor(permissionB
     override fun requestAgain(permissions: List<String>) {
         // don't care what the permissions param is, always request REQUEST_INSTALL_PACKAGES permission.
         pb.requestInstallPackagePermissionNow(this)
-    }
-
-    companion object {
-        /**
-         * Define the const to compat with system lower than M.
-         */
-        const val REQUEST_INSTALL_PACKAGES = "android.permission.REQUEST_INSTALL_PACKAGES"
     }
 }

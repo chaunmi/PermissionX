@@ -25,6 +25,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.permissionx.guolindev.Permission
 import com.permissionx.guolindev.PermissionX
 import com.permissionx.guolindev.callback.ExplainReasonCallback
 import com.permissionx.guolindev.callback.ExplainReasonCallbackWithBeforeParam
@@ -37,6 +38,8 @@ import com.permissionx.guolindev.dialog.allSpecialPermissions
 import com.permissionx.guolindev.utils.AndroidVersion
 import com.permissionx.guolindev.utils.PermissionChecker
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.collections.ArrayList
 
 /**
  * More APIs for developers to control PermissionX functions.
@@ -222,6 +225,12 @@ class PermissionBuilder(
      */
     val targetSdkVersion: Int
         get() = activity.applicationInfo.targetSdkVersion
+
+    private var extensionRequestPermissionList = ArrayList<BaseTask>()
+
+    fun addRequestPermissionTask(baseTask: BaseTask) {
+        extensionRequestPermissionList.add(baseTask)
+    }
 
     /**
      * Called when permissions need to explain request reason.
@@ -548,7 +557,7 @@ class PermissionBuilder(
      * @return True if specialPermissions contains ACCESS_BACKGROUND_LOCATION permission, false otherwise.
      */
     fun shouldRequestBackgroundLocationPermission(): Boolean {
-        return specialPermissions.contains(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
+        return specialPermissions.contains(Permission.ACCESS_BACKGROUND_LOCATION)
     }
 
     /**
@@ -575,7 +584,7 @@ class PermissionBuilder(
      * @return True if specialPermissions contains MANAGE_EXTERNAL_STORAGE permission, false otherwise.
      */
     fun shouldRequestManageExternalStoragePermission(): Boolean {
-        return specialPermissions.contains(RequestManageExternalStoragePermission.MANAGE_EXTERNAL_STORAGE)
+        return specialPermissions.contains(Permission.MANAGE_EXTERNAL_STORAGE)
     }
 
     /**
@@ -584,7 +593,7 @@ class PermissionBuilder(
      * @return True if specialPermissions contains REQUEST_INSTALL_PACKAGES permission, false otherwise.
      */
     fun shouldRequestInstallPackagesPermission(): Boolean {
-        return specialPermissions.contains(RequestInstallPackagesPermission.REQUEST_INSTALL_PACKAGES)
+        return specialPermissions.contains(Permission.REQUEST_INSTALL_PACKAGES)
     }
 
     /**
@@ -593,7 +602,7 @@ class PermissionBuilder(
      * @return True if specialPermissions contains POST_NOTIFICATIONS permission, false otherwise.
      */
     fun shouldRequestNotificationPermission(): Boolean {
-        return specialPermissions.contains(PermissionX.permission.POST_NOTIFICATIONS)
+        return specialPermissions.contains(Permission.POST_NOTIFICATIONS)
     }
 
     /**
@@ -602,7 +611,7 @@ class PermissionBuilder(
      * @return True if specialPermissions contains BODY_SENSORS_BACKGROUND permission, false otherwise.
      */
     fun shouldRequestBodySensorsBackgroundPermission(): Boolean {
-        return specialPermissions.contains(RequestBodySensorsBackgroundPermission.BODY_SENSORS_BACKGROUND)
+        return specialPermissions.contains(Permission.BODY_SENSORS_BACKGROUND)
     }
 
     private fun startRequest() {
@@ -621,6 +630,12 @@ class PermissionBuilder(
         requestChain.addTaskToChain(RequestInstallPackagesPermission(this))
         requestChain.addTaskToChain(RequestNotificationPermission(this))
         requestChain.addTaskToChain(RequestBodySensorsBackgroundPermission(this))
+
+        if(extensionRequestPermissionList.isNotEmpty()) {
+            extensionRequestPermissionList.forEach {
+                requestChain.addTaskToChain(it)
+            }
+        }
         requestChain.runTask()
     }
 
@@ -712,24 +727,24 @@ class PermissionBuilder(
             }
         }
         val osVersion = Build.VERSION.SDK_INT
-        if (RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION in specialPermissionSet) {
+        if (Permission.ACCESS_BACKGROUND_LOCATION in specialPermissionSet) {
             if (osVersion == Build.VERSION_CODES.Q ||
                 (osVersion == Build.VERSION_CODES.R && targetSdkVersion < Build.VERSION_CODES.R)) {
                 // If we request ACCESS_BACKGROUND_LOCATION on Q or on R but targetSdkVersion below R,
                 // We don't need to request specially, just request as normal permission.
-                specialPermissionSet.remove(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
-                normalPermissionSet.add(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
+                specialPermissionSet.remove(Permission.ACCESS_BACKGROUND_LOCATION)
+                normalPermissionSet.add(Permission.ACCESS_BACKGROUND_LOCATION)
             }
         }
-        if (PermissionX.permission.POST_NOTIFICATIONS in specialPermissionSet) {
+        if (Permission.POST_NOTIFICATIONS in specialPermissionSet) {
             if (osVersion >= Build.VERSION_CODES.TIRAMISU && targetSdkVersion >= Build.VERSION_CODES.TIRAMISU) {
                 // If we request POST_NOTIFICATIONS on TIRAMISU or above and targetSdkVersion >= TIRAMISU,
                 // We don't need to request specially, just request as normal permission.
                 /**
                  *   从Android 13开始弹通知栏需要像使用运行时权限一样申请运行时权限，低于13版本默认授予通知栏权限，如果拒绝了只能去权限设置页面
                   */
-                specialPermissionSet.remove(PermissionX.permission.POST_NOTIFICATIONS)
-                normalPermissionSet.add(PermissionX.permission.POST_NOTIFICATIONS)
+                specialPermissionSet.remove(Permission.POST_NOTIFICATIONS)
+                normalPermissionSet.add(Permission.POST_NOTIFICATIONS)
             }
         }
         return Pair(normalPermissionSet, specialPermissionSet)
