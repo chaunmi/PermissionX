@@ -42,6 +42,9 @@ internal class RequestInstallPackagesPermission internal constructor(permissionB
 
     override fun request() {
         if (pb.shouldRequestInstallPackagesPermission()) {
+            /**
+             * TODO 待验证是否需要target也为 O
+             */
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && pb.targetSdkVersion >= Build.VERSION_CODES.O) {
                 if (pb.activity.packageManager.canRequestPackageInstalls()) {
                     // REQUEST_INSTALL_PACKAGES permission has already granted, we can finish this task now.

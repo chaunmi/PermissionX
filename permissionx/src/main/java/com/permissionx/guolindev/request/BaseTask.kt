@@ -78,7 +78,6 @@ internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTas
                     pb.grantedPermissions.remove(RequestBackgroundLocationPermission.ACCESS_BACKGROUND_LOCATION)
                 }
             }
-
             /**
              * 针对低于M的版本已做了处理，从special中移除，默认授予权限，具体详见[RequestSystemAlertWindowPermission]
              * 由于canDrawOverlays是大于M版本才有的api，因此需要限制到 M才判断，M以下默认授予权限

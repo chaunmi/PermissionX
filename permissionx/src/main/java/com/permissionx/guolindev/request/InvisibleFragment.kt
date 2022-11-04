@@ -281,7 +281,7 @@ class InvisibleFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
             intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireActivity().packageName)
-            if (!PermissionUtils.areActivityIntent(requireActivity(), intent)) {
+            if (intent == null || !PermissionUtils.areActivityIntent(requireActivity(), intent)) {
                 intent = PermissionUtils.getApplicationDetailsIntent(requireActivity())
             }
             requestNotificationLauncher.launch(intent)
