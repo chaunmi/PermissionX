@@ -19,7 +19,6 @@ import android.text.TextUtils
 import android.view.Surface
 import androidx.annotation.RequiresApi
 import com.permissionx.guolindev.Permission
-import com.permissionx.guolindev.request.PermissionApi
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
@@ -48,13 +47,6 @@ object PermissionUtils {
                 equalsPermission(permission, Permission.PICTURE_IN_PICTURE)
     }
 
-    /**
-     * 判断某个危险权限是否授予了
-     */
-    @RequiresApi(api = AndroidVersion.ANDROID_6)
-    fun checkSelfPermission(context: Context, permission: String?): Boolean {
-        return context.checkSelfPermission(permission!!) == PackageManager.PERMISSION_GRANTED
-    }
 
     /**
      * 解决 Android 12 调用 shouldShowRequestPermissionRationale 出现内存泄漏的问题
@@ -65,7 +57,7 @@ object PermissionUtils {
      */
     @RequiresApi(api = AndroidVersion.ANDROID_6)
     fun shouldShowRequestPermissionRationale(activity: Activity, permission: String?): Boolean {
-        if (AndroidVersion.androidVersionCode === AndroidVersion.ANDROID_12) {
+        if (AndroidVersion.getRuntimeAndroidVersion() === AndroidVersion.ANDROID_12) {
             try {
                 val packageManager = activity.application.packageManager
                 val method = PackageManager::class.java.getMethod(
@@ -189,75 +181,6 @@ object PermissionUtils {
     }
 
     /**
-     * 优化权限回调结果
-     */
-    fun optimizePermissionResults(
-        activity: Activity,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        for (i in permissions.indices) {
-            var recheck = false
-            val permission = permissions[i]
-
-            // 如果这个权限是特殊权限，那么就重新进行权限检测
-            if (PermissionApi.isSpecialPermission(permission)) {
-                recheck = true
-            }
-            if (!AndroidVersion.isAndroid13 &&
-                (equalsPermission(permission, Permission.POST_NOTIFICATIONS) ||
-                        equalsPermission(permission, Permission.NEARBY_WIFI_DEVICES) ||
-                        equalsPermission(permission, Permission.BODY_SENSORS_BACKGROUND) ||
-                        equalsPermission(permission, Permission.READ_MEDIA_IMAGES) ||
-                        equalsPermission(permission, Permission.READ_MEDIA_VIDEO) ||
-                        equalsPermission(permission, Permission.READ_MEDIA_AUDIO))
-            ) {
-                recheck = true
-            }
-
-            // 重新检查 Android 12 的三个新权限
-            if (!AndroidVersion.isAndroid12 &&
-                (equalsPermission(permission, Permission.BLUETOOTH_SCAN) ||
-                        equalsPermission(permission, Permission.BLUETOOTH_CONNECT) ||
-                        equalsPermission(permission, Permission.BLUETOOTH_ADVERTISE))
-            ) {
-                recheck = true
-            }
-
-            // 重新检查 Android 10.0 的三个新权限
-            if (!AndroidVersion.isAndroid10 &&
-                (equalsPermission(permission, Permission.ACCESS_BACKGROUND_LOCATION) ||
-                        equalsPermission(permission, Permission.ACTIVITY_RECOGNITION) ||
-                        equalsPermission(permission, Permission.ACCESS_MEDIA_LOCATION))
-            ) {
-                recheck = true
-            }
-
-            // 重新检查 Android 9.0 的一个新权限
-            if (!AndroidVersion.isAndroid9 &&
-                equalsPermission(permission, Permission.ACCEPT_HANDOVER)
-            ) {
-                recheck = true
-            }
-
-            // 重新检查 Android 8.0 的两个新权限
-            if (!AndroidVersion.isAndroid8 &&
-                (equalsPermission(permission, Permission.ANSWER_PHONE_CALLS) ||
-                        equalsPermission(permission, Permission.READ_PHONE_NUMBERS))
-            ) {
-                recheck = true
-            }
-            if (recheck) {
-                grantResults[i] = if (PermissionApi.isGrantedPermission(
-                        activity,
-                        permission
-                    )
-                ) PackageManager.PERMISSION_GRANTED else PackageManager.PERMISSION_DENIED
-            }
-        }
-    }
-
-    /**
      * 将数组转换成 ArrayList
      *
      * 这里解释一下为什么不用 Arrays.asList
@@ -312,9 +235,9 @@ object PermissionUtils {
         val assets = context.assets
         var cookie: Int
         try {
-            if (AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_9 &&
-                AndroidVersion.androidVersionCode >= AndroidVersion.ANDROID_9 &&
-                AndroidVersion.androidVersionCode < AndroidVersion.ANDROID_11
+            if (AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_9 &&
+                AndroidVersion.getRuntimeAndroidVersion() >= AndroidVersion.ANDROID_9 &&
+                AndroidVersion.getRuntimeAndroidVersion() < AndroidVersion.ANDROID_11
             ) {
                 val clazz: Class<*> = assets.javaClass
                 val findCookieForPathMethod = clazz.getDeclaredMethod(
@@ -495,37 +418,6 @@ object PermissionUtils {
      */
     fun getPackageNameUri(context: Context): Uri {
         return Uri.parse("package:" + context.packageName)
-    }
-
-    /**
-     * 根据传入的权限自动选择最合适的权限设置页
-     * 主要是在特殊权限的时候用，一般只有特殊权限需要跳转具体权限页面
-     * 另一种情况是拒绝不再询问后需要跳转到app权限页面
-     * @param permissions                 请求失败的权限
-     */
-    fun getSmartPermissionIntent(context: Context, permissions: List<String?>?): Intent {
-        // 如果失败的权限里面不包含特殊权限
-        if (permissions == null || permissions.isEmpty() ||
-            !PermissionApi.containsSpecialPermission(permissions)
-        ) {
-            return getApplicationDetailsIntent(context)
-        }
-        when (permissions.size) {
-            1 ->                 // 如果当前只有一个权限被拒绝了
-                return PermissionApi.getPermissionIntent(context, permissions[0])
-            3 -> if (AndroidVersion.isAndroid11 &&
-                containsPermission(permissions, Permission.MANAGE_EXTERNAL_STORAGE) &&
-                containsPermission(permissions, Permission.READ_EXTERNAL_STORAGE) &&
-                containsPermission(permissions, Permission.WRITE_EXTERNAL_STORAGE)
-            ) {
-                return PermissionApi.getPermissionIntent(
-                    context,
-                    Permission.MANAGE_EXTERNAL_STORAGE
-                )
-            }
-            else -> {}
-        }
-        return getApplicationDetailsIntent(context)
     }
 
     /**

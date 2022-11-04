@@ -31,13 +31,13 @@ class AccessMediaLocationPermissionCheck: BasePermissionCheck() {
      * 是否有读取文件的权限
      */
     private fun hasReadStoragePermission(context: Context): Boolean {
-        return if (AndroidVersion.isAndroid13 && AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_13) {
+        return if (AndroidVersion.isAndroid13 && AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_13) {
             PermissionX.isGranted(context, Permission.READ_MEDIA_IMAGES) ||
                     Environment.isExternalStorageManager()
-        }else if (AndroidVersion.isAndroid11 && AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_11) {
+        }else if (AndroidVersion.isAndroid11 && AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_11) {
             PermissionX.isGranted(context, Permission.READ_EXTERNAL_STORAGE) ||
                     Environment.isExternalStorageManager()
-        }else if(AndroidVersion.isAndroid10 && AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_10) {
+        }else if(AndroidVersion.isAndroid10 && AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_10) {
             ExternalStoragePermissionCheck.isUseDeprecationExternalStorage &&
                     PermissionX.isGranted(context, Permission.READ_EXTERNAL_STORAGE)
         } else PermissionX.isGranted(context, Permission.READ_EXTERNAL_STORAGE)

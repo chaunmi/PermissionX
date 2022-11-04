@@ -268,35 +268,4 @@ object Permission {
 
     /** 接收彩信  */
     const val RECEIVE_MMS = "android.permission.RECEIVE_MMS"
-
-    /**
-     * 权限组
-     */
-    object Group {
-        /** 存储权限  */
-        val STORAGE = arrayOf(
-            READ_EXTERNAL_STORAGE,
-            WRITE_EXTERNAL_STORAGE
-        )
-
-        /** 日历权限  */
-        val CALENDAR = arrayOf(
-            READ_CALENDAR,
-            WRITE_CALENDAR
-        )
-
-        /** 联系人权限  */
-        val CONTACTS = arrayOf(
-            READ_CONTACTS,
-            WRITE_CONTACTS,
-            GET_ACCOUNTS
-        )
-
-        /** 蓝牙权限  */
-        val BLUETOOTH = arrayOf(
-            BLUETOOTH_SCAN,
-            BLUETOOTH_CONNECT,
-            BLUETOOTH_ADVERTISE
-        )
-    }
 }

@@ -211,7 +211,7 @@ internal object PermissionChecker {
 //                        "do not apply for permissions unrelated to access media location"
 //            )
 //        }
-        if (AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_13) {
+        if (AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_13) {
             if (!PermissionUtils.containsPermission(
                     requestPermissions,
                     Permission.READ_MEDIA_IMAGES
@@ -278,7 +278,7 @@ internal object PermissionChecker {
         ) {
             return
         }
-        if (AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_13 &&
+        if (AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_13 &&
             (PermissionUtils.containsPermission(
                 requestPermissions,
                 Permission.READ_EXTERNAL_STORAGE
@@ -325,7 +325,7 @@ internal object PermissionChecker {
                 if ("application" != parser.name) {
                     continue
                 }
-                val targetSdkVersion: Int = AndroidVersion.getTargetSdkVersionCode(context)
+                val targetSdkVersion: Int = AndroidVersion.getTargetSdkVersion(context)
                 val requestLegacyExternalStorage = parser.getAttributeBooleanValue(
                     PermissionUtils.androidNamespace,
                     "requestLegacyExternalStorage", false
@@ -427,7 +427,7 @@ internal object PermissionChecker {
      * 检查定位权限
      */
     fun checkLocationPermission(context: Context, requestPermissions: List<String?>) {
-        if (AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_12) {
+        if (AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_12) {
             if (PermissionUtils.containsPermission(
                     requestPermissions,
                     Permission.ACCESS_FINE_LOCATION
@@ -642,7 +642,7 @@ internal object PermissionChecker {
         }
 
         // 必须设置正确的 targetSdkVersion 才能正常检测权限
-        if (AndroidVersion.getTargetSdkVersionCode(context) < targetSdkMinVersion) {
+        if (AndroidVersion.getTargetSdkVersion(context) < targetSdkMinVersion) {
             throw RuntimeException(
                 ("The targetSdkVersion SDK must be " + targetSdkMinVersion +
                         " or more, if you do not want to upgrade targetSdkVersion, " +
@@ -687,7 +687,7 @@ internal object PermissionChecker {
             ) {
                 // 在 Android 11 及之前的版本，申请后台定位权限需要精确定位权限
                 // 在 Android 12 及之后的版本，申请后台定位权限即可以用精确定位权限也可以用模糊定位权限
-                if (AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_12) {
+                if (AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_12) {
                     checkManifestPermission(
                         manifestPermissions,
                         Permission.ACCESS_FINE_LOCATION,
@@ -735,7 +735,7 @@ internal object PermissionChecker {
                 }
                 if (PermissionUtils.equalsPermission(permission, Permission.SCHEDULE_EXACT_ALARM)) {
                     // https://developer.android.google.cn/reference/android/Manifest.permission?hl=zh_cn#USE_EXACT_ALARM
-                    if (AndroidVersion.getTargetSdkVersionCode(context) >= AndroidVersion.ANDROID_13) {
+                    if (AndroidVersion.getTargetSdkVersion(context) >= AndroidVersion.ANDROID_13) {
                         checkManifestPermission(
                             manifestPermissions,
                             Permission.SCHEDULE_EXACT_ALARM,
