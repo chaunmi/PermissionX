@@ -61,10 +61,6 @@ abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTask {
             deniedSet.addAll(pb.permanentDeniedPermissions)
             deniedSet.addAll(pb.permissionsWontRequest)
 
-            /**
-             * 最后再check一下是否已授权
-             * TODO 这里逻辑可以优化以下，针对低版本的情况，比如MANAGE_EXTERNAL_STORAGE和REQUEST_INSTALL_PACKAGES的处理
-             */
 
             /**
              * 对于Q以下版本无后台定位权限，在[RequestBackgroundLocationPermission]中已经做过处理, 从special权限中移除
@@ -129,7 +125,7 @@ abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTask {
              * canRequestPackageInstalls()为 O及以上版本才有的api
              */
             if (pb.shouldRequestInstallPackagesPermission() &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && pb.targetSdkVersion >= Build.VERSION_CODES.O) {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if (pb.activity.packageManager.canRequestPackageInstalls()) {
                     pb.grantedPermissions.add(Permission.REQUEST_INSTALL_PACKAGES)
                     deniedSet.remove(Permission.REQUEST_INSTALL_PACKAGES)

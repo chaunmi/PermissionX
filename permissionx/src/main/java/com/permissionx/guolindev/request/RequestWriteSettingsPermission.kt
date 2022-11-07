@@ -32,6 +32,7 @@ internal class RequestWriteSettingsPermission internal constructor(permissionBui
         if (pb.shouldRequestWriteSettingsPermission()) {
             /**
              * 由于canWrite是大于M版本才有的api，因此需要限制到 M才判断，M以下默认授予权限
+             * 已验证需要target大于M才需要申请权限，否则默认授予权限
              */
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && pb.targetSdkVersion >= Build.VERSION_CODES.M) {
                 if (Settings.System.canWrite(pb.activity)) {

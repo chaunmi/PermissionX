@@ -29,26 +29,6 @@ object PermissionUtils {
     private val HANDLER = Handler(Looper.getMainLooper())
 
     /**
-     * 判断某个权限是否是特殊权限
-     */
-    fun isSpecialPermission(permission: String?): Boolean {
-        return equalsPermission(permission, Permission.MANAGE_EXTERNAL_STORAGE) ||
-                equalsPermission(permission, Permission.REQUEST_INSTALL_PACKAGES) ||
-                equalsPermission(permission, Permission.SYSTEM_ALERT_WINDOW) ||
-                equalsPermission(permission, Permission.WRITE_SETTINGS) ||
-                equalsPermission(permission, Permission.POST_NOTIFICATIONS) ||
-
-                equalsPermission(permission, Permission.PACKAGE_USAGE_STATS) ||
-                equalsPermission(permission, Permission.SCHEDULE_EXACT_ALARM) ||
-                equalsPermission(permission, Permission.BIND_NOTIFICATION_LISTENER_SERVICE) ||
-                equalsPermission(permission, Permission.ACCESS_NOTIFICATION_POLICY) ||
-                equalsPermission(permission, Permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) ||
-                equalsPermission(permission, Permission.BIND_VPN_SERVICE) ||
-                equalsPermission(permission, Permission.PICTURE_IN_PICTURE)
-    }
-
-
-    /**
      * 解决 Android 12 调用 shouldShowRequestPermissionRationale 出现内存泄漏的问题
      * Android 12L 和 Android 13 版本经过测试不会出现这个问题，证明 Google 在新版本上已经修复了这个问题
      * 但是对于 Android 12 仍是一个历史遗留问题，这是我们所有应用开发者不得不面对的一个事情

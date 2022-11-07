@@ -246,7 +246,7 @@ class InvisibleFragment : Fragment() {
     /**
      * Request REQUEST_INSTALL_PACKAGES permission. On Android O and above, it's request by
      * Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES with Intent.
-     * TODO 需要适配一下，12还是13可以向运行时权限一样直接申请安装权限，不用再跳转
+     *
      *
      */
     fun requestInstallPackagesPermissionNow(
