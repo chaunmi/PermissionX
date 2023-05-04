@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.permissionx.guolindev.compat.PermissionCheckImpl;
 import com.permissionx.guolindev.utils.PermissionChecker;
 
 /**
@@ -91,6 +92,20 @@ public class PermissionX {
      */
     public static boolean isGranted(@NonNull Context context, @NonNull String permission) {
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * 兼容常见运行时权限及特殊权限
+     * @param context
+     * @param permission
+     * @return
+     */
+    public static boolean isPermissionGranted(@NonNull Context context, @NonNull String permission) {
+        boolean result = isGranted(context, permission);
+        if(!result) {
+            result = PermissionCheckImpl.INSTANCE.isPermissionGranted(context, permission);
+        }
+        return result;
     }
 
     /**
