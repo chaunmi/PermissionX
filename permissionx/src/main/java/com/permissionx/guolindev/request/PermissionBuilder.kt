@@ -95,13 +95,13 @@ class PermissionBuilder(
      */
     private val invisibleFragment: InvisibleFragment
         get() {
-            val existedFragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG)
+            val existedFragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG + this.hashCode())
             return if (existedFragment != null) {
                 existedFragment as InvisibleFragment
             } else {
                 val invisibleFragment = InvisibleFragment()
                 fragmentManager.beginTransaction()
-                    .add(invisibleFragment, FRAGMENT_TAG)
+                    .add(invisibleFragment, FRAGMENT_TAG + this.hashCode())
                     .commitNowAllowingStateLoss()
                 invisibleFragment
             }
@@ -643,7 +643,7 @@ class PermissionBuilder(
      * Remove the InvisibleFragment from current FragmentManager.
      */
     private fun removeInvisibleFragment() {
-        val existedFragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG)
+        val existedFragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG + this.hashCode())
         if (existedFragment != null) {
             fragmentManager.beginTransaction().remove(existedFragment).commitNowAllowingStateLoss()
         }
